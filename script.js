@@ -7,6 +7,7 @@ const data = {
 	cves: [
 		{ title: 'React2Shell — CVE-2025-55182', file: 'Vulnerabilidades/React2Shell/README.md' },
 		{ title: 'Dirty Pipe — CVE-2022-0847', file: 'Vulnerabilidades/DirtyPipez/README.md' },
+		{ title: 'Pwnkit — CVE-2021-4034', file: 'Vulnerabilidades/Pwnkit/README.md'},
 	],
 	linux: [
 		{ title: 'Linux Privilege Escalation', file: 'Linux/Linux-Privilege-Escalation/README.md' },
@@ -144,3 +145,4 @@ async function loadMarkdown(path) {
 
 
 loadHome();
+
