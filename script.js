@@ -100,6 +100,11 @@ function loadHome() {
 	`;
 }
 
+function toggleMenu() {
+  document.querySelector('.menu').classList.toggle('open');
+}
+
+
 function loadCategory(category) {
 	const items = data[category];
 
