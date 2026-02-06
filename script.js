@@ -18,6 +18,7 @@ const data = {
 	],
 	tools: [
 		{ title: 'Gobuster', file: 'Ferramentas/GoBuster/README.md' },
+		{ title: 'FFUF', file: 'Ferramentas/FFUF/README.md' },
 		{ title: 'Hydra', file: 'Ferramentas/Hydra/README.md' },
 		{ title: 'John The Ripper', file: 'Ferramentas/John-The-Ripper/README.md' },
 	],
@@ -57,7 +58,7 @@ function loadHome() {
 			<li><strong>Linguagens:</strong> Python, Bash, JavaScript, C, Java</li>
 			<li>
 				<strong>Ferramentas:</strong>
-				Nmap, Burp Suite, Netcat, Socat, Gobuster, Hydra,
+				Nmap, Burp Suite, Netcat, Socat, Gobuster, FFUF, Hydra,
 				John The Ripper, Nikto, SQLMap, Metasploit
 			</li>
 			<li><strong>Ambientes:</strong> TryHackMe, VulnHub, Labs locais</li>
@@ -150,4 +151,5 @@ async function loadMarkdown(path) {
 
 
 loadHome();
+
 
