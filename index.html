@@ -8,44 +8,44 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
-
 </head>
 
 <body>
 
     <aside class="sidebar">
         <button class="menu-toggle" onclick="toggleMenu()">☰ Menu</button>
+
         <nav class="menu">
-            <button class="active" onclick="loadHome()">Home</button>
-            <button onclick="loadCategory('checklists')">Checklists & Metodologias</button>
-            <button onclick="loadCategory('cves')">Vulnerabilidades Reais(CVE)</button>
-            <button onclick="loadCategory('linux')">Linux Security</button>
-            <button onclick="loadCategory('network')">Network Security</button>
-            <button onclick="loadCategory('tools')">Ferramentas</button>
-            <button onclick="loadCategory('labs')">Laboratórios Práticos</button>
+            <button onclick="location.hash='/'">Home</button>
+            <button onclick="navigateCategory('checklists')">Checklists & Metodologias</button>
+            <button onclick="navigateCategory('cves')">Vulnerabilidades Reais (CVE)</button>
+            <button onclick="navigateCategory('linux')">Linux Security</button>
+            <button onclick="navigateCategory('network')">Network Security</button>
+            <button onclick="navigateCategory('tools')">Ferramentas</button>
+            <button onclick="navigateCategory('labs')">Laboratórios Práticos</button>
         </nav>
 
-         <div class="ascii">
-            ;               ,           
-         ,;                 '.         
-        ;:                   :;        
-       ::                     ::       
-       ::                     ::       
-       ':                     :        
-        :.                    :        
-     ;' ::                   ::  '     
-    .'  ';                   ;'  '.    
-   ::    :;                 ;:    ::   
-   ;      :;.             ,;:     ::   
-   :;      :;:           ,;"      ::   
-   ::.      ':;  ..,.;  ;:'     ,.;:   
-    "'"...   '::,::::: ;:   .;.;""'    
-        '"""....;:::::;,;.;"""         
-    .:::.....'"':::::::'",...;::::;.   
-   ;:' '""'"";.,;:::::;.'""""""  ':;   
-  ::'         ;::;:::;::..         :;  
- ::         ,;:::::::::::;:..       :: 
- ;'     ,;;:;::::::::::::::;";..    ':.
+        <div class="ascii">
+   ;               ,           
+ ,;                 '.         
+;:                   :;        
+::                     ::       
+::                     ::       
+':                     :        
+ :.                    :        
+;' ::                   ::  '     
+.'  ';                   ;'  '.    
+::    :;                 ;:    ::   
+;      :;.             ,;:     ::   
+:;      :;:           ,;"      ::   
+::.      ':;  ..,.;  ;:'     ,.;:   
+ "'"...   '::,::::: ;:   .;.;""'    
+     '"""....;:::::;,;.;"""         
+ .:::.....'"':::::::'",...;::::;.   
+;:' '""'"";.,;:::::;.'""""""  ':;   
+::'         ;::;:::;::..         :;  
+::         ,;:::::::::::;:..       :: 
+;'     ,;;:;::::::::::::::;";..    ':.
 ::     ;:"  ::::::"""'::::::  ":     ::
  :.    ::   ::::::;  :::::::   :     ; 
   ;    ::   :::::::  :::::::   :    ;  
@@ -62,12 +62,11 @@
     </aside>
 
     <main class="main">
-        <div class="content" id="content"></div>
+        <div id="content"></div>
     </main>
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js"></script>
 
-
 </body>
-
 </html>

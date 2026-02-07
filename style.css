@@ -60,11 +60,15 @@ body {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
+  /* Previne overflow horizontal */
+  overflow-x: hidden;
 }
 
 .content {
   max-width: 900px;
   margin: 0 auto;
+  /* Garante que o conteúdo não ultrapasse */
+  width: 100%;
 }
 
 h1, h2, h3 {
@@ -110,23 +114,83 @@ footer {
   text-align: center;
 }
 
-.content img {
+/* Container principal para todo conteúdo markdown */
+#content {
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Estilo para imagens renderizadas pelo marked.js */
+#content img {
+  display: block;
   max-width: 100%;
   height: auto;
-
-  display: block;
-  margin: 20px auto;
-
+  margin: 32px auto;
+  
+  /* Centralização garantida */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  
+  /* Limites responsivos inteligentes */
+  max-width: min(1000px, 95%);
+  max-height: 70vh; /* Limita altura máxima */
+  
+  /* Mantém proporção e evita distorção */
+  object-fit: contain;
+  
+  /* Estilos visuais */
   border: 1px solid #333;
-  border-radius: 4px;
+  background-color: #0a0a0a;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+  
+  /* Smooth scaling */
+  transition: max-width 0.3s ease;
+}
 
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.08);
+/* Imagens dentro de parágrafos */
+#content p img {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 
-  background-color: #000;
+/* Para imagens que devem ocupar mais largura */
+#content img.large {
+  max-width: min(900px, 98%);
+}
+
+/* Para imagens muito pequenas (não distorcer) */
+#content img.small {
+  max-width: 300px;
+}
+
+/* Contêiner para imagens com legenda (se usado) */
+#content figure {
+  margin: 32px 0;
+  text-align: center;
+  width: 100%;
+}
+
+#content figure img {
+  margin: 0 auto;
+}
+
+#content figcaption {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* Previne que tabelas e outros elementos causem overflow */
+#content table {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
 }
 
 @media (max-width: 768px) {
-
   body {
     flex-direction: column;
     height: auto;
@@ -145,25 +209,38 @@ footer {
     display: none;
   }
 
-  /* Menu em grid no mobile */
+  /* Menu toggle para mobile */
+  .menu-toggle {
+    display: block;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
   .menu {
+    display: none;
+    margin-top: 10px;
+  }
+
+  .menu.open {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
 
-  .menu button {
-    font-size: 12px;
-    padding: 6px;
-    text-align: center;
-  }
-
   .main {
     padding: 16px;
+    overflow-x: hidden;
   }
 
   .content {
     max-width: 100%;
+    padding: 0 4px;
   }
 
   h1 {
@@ -186,39 +263,66 @@ footer {
   pre {
     font-size: 12px;
     padding: 12px;
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   footer {
     font-size: 11px;
     margin-top: 40px;
   }
-}
 
-.menu-toggle {
-  display: none;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 8px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-
-  .menu-toggle {
-    display: block;
+  /* Ajustes específicos para imagens no mobile */
+  #content img {
+    max-width: 100%;
+    max-height: 60vh;
+    margin: 20px auto;
   }
 
-  .menu {
-    display: none;
-    margin-top: 10px;
+  #content p img {
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
+  
+  /* Força o redimensionamento em telas muito pequenas */
+  #content * {
+    max-width: 100%;
+  }
+}
 
+/* Para celulares muito pequenos */
+@media (max-width: 480px) {
   .menu.open {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
+    grid-template-columns: 1fr;
   }
+  
+  #content img {
+    max-height: 50vh;
+    margin: 16px auto;
+    border-width: 1px;
+  }
+  
+  .main {
+    padding: 12px;
+  }
+}
+
+/* Para garantir que imagens nunca saiam da tela */
+@media (max-width: 320px) {
+  #content img {
+    max-height: 40vh;
+  }
+}
+
+/* ===== ESTILOS ADICIONAIS PARA CONTEÚDO DINÂMICO ===== */
+
+/* Garante que links com imagens não quebrem layout */
+#content a img {
+  display: inline-block;
+}
+
+/* Previne que imagens em listas quebrem layout */
+#content li img {
+  vertical-align: middle;
+  margin: 8px 0;
 }
