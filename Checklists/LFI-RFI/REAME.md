@@ -70,8 +70,6 @@
 
 ---
 
-# LFI (Local File Inclusion) e RFI (Remote File Inclusion)
-
 ## Introdução
 
 ### Definições
