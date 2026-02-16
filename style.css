@@ -194,6 +194,59 @@ footer {
   display: block;
 }
 
+/* Estilos para blocos de código */
+pre {
+    background: #1e1e1e;
+    border-radius: 2px;
+    padding: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid #333;
+    position: relative;
+}
+
+pre code {
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    tab-size: 4;
+}
+
+/* Adiciona um indicador da linguagem no bloco de código */
+pre::before {
+    content: attr(data-language);
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    background: #333;
+    color: #fff;
+    padding: 0.2rem 0.8rem;
+    font-size: 12px;
+    border-radius: 0 0 8px 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Estilo para blocos de código bash específicos */
+code.language-bash,
+code.language-sh {
+    color: #89e051;
+}
+
+/* Destaque para comandos */
+.language-bash .hljs-built_in {
+    color: #e6c07b;
+}
+
+/* Estilo para erros/mensagens */
+.error {
+    background: #2d2d2d;
+    border-left: 4px solid #ff6b6b;
+    padding: 1rem;
+    border-radius: 4px;
+    color: #ff6b6b;
+}
+
 @media (max-width: 768px) {
   body {
     flex-direction: column;

@@ -39,6 +39,30 @@ const data = {
 	],
 };
 
+// Configuração do marked para usar highlight.js
+marked.setOptions({
+    highlight: function(code, lang) {
+        // Verifica se a linguagem foi especificada e é suportada
+        if (lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
+        }
+        // Se não tiver linguagem especificada, tenta detectar automaticamente
+        return hljs.highlightAuto(code).value;
+    },
+    breaks: true, // Para suportar quebras de linha no markdown
+    gfm: true // GitHub Flavored Markdown
+});
+
+// Função para aplicar syntax highlighting após carregar o conteúdo
+function aplicarSyntaxHighlighting() {
+    document.querySelectorAll('pre code').forEach((block) => {
+        // Se o bloco já não foi processado pelo marked highlight
+        if (!block.classList.contains('hljs')) {
+            hljs.highlightElement(block);
+        }
+    });
+}
+
 // Função para alternar menu no mobile
 function toggleMenu() {
 	if (menu) {
@@ -220,6 +244,9 @@ async function loadMarkdown(path) {
 
 		content.innerHTML = marked.parse(markdown);
 		
+		// Aplica syntax highlighting
+		aplicarSyntaxHighlighting();
+		
 		// Corrige as imagens após carregar o conteúdo
 		setTimeout(fixImages, 100);
 	} catch {
@@ -254,12 +281,24 @@ window.addEventListener('resize', () => {
 	}
 });
 
-// Inicializa o router
-router();
-
 // Configura os botões do menu para fechar no mobile
 document.querySelectorAll('.menu button').forEach(button => {
 	button.addEventListener('click', closeMenu);
-
 });
 
+// Observador para conteúdo dinâmico (para garantir que o highlighting seja aplicado)
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+            aplicarSyntaxHighlighting();
+        }
+    });
+});
+
+// Inicia o observador quando o content existe
+if (content) {
+    observer.observe(content, { childList: true, subtree: true });
+}
+
+// Inicializa o router
+router();
