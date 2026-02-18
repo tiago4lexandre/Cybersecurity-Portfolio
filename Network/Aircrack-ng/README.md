@@ -20,11 +20,11 @@
 # 📡 Aircrack-ng
 ## Auditoria e Testes de Segurança em Redes Wireless
 
-> O **:contentReference[oaicite:0]{index=0}** é uma das suítes de auditoria Wi-Fi mais utilizadas no mundo da segurança ofensiva.
+> O **Aircrack-ng** é uma das suítes de auditoria Wi-Fi mais utilizadas no mundo da segurança ofensiva.
 >
 > Projetado para avaliar a robustez de redes wireless, ele permite captura de tráfego, análise de protocolos, injeção de pacotes e quebra de chaves de criptografia utilizadas em **WEP, WPA e WPA2**.
 >
-> Tornou-se referência em ambientes como o **:contentReference[oaicite:1]{index=1}**, sendo amplamente adotado por profissionais de Pentest, Red Team e pesquisadores em segurança wireless.
+> Tornou-se referência em ambientes como o **Kali Linux**, sendo amplamente adotado por profissionais de Pentest, Red Team e pesquisadores em segurança wireless.
 
 ---
 
