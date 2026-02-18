@@ -20,9 +20,9 @@
 # 🎯 PowerShell Empire & Starkiller
 ## Command & Control (C2) para Pós-Exploração
 
-> O **:contentReference[oaicite:0]{index=0}** é um framework de **Command & Control (C2)** voltado para operações de Red Team e pós-exploração avançada, permitindo controle furtivo de sistemas comprometidos através de execução *fileless* em memória.
+> O **PowerShell Empire** é um framework de **Command & Control (C2)** voltado para operações de Red Team e pós-exploração avançada, permitindo controle furtivo de sistemas comprometidos por meio de execução *fileless* diretamente em memória.
 >
-> Complementando sua operação, o **:contentReference[oaicite:1]{index=1}** atua como interface gráfica oficial, oferecendo gerenciamento visual de agentes, módulos e listeners por meio da API REST do Empire.
+> Complementando sua operação, o **Starkiller** atua como interface gráfica oficial, oferecendo gerenciamento visual de agentes, módulos e listeners por meio da API REST do Empire.
 >
 > Juntos, formam uma infraestrutura C2 moderna capaz de:
 >
