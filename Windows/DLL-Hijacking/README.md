@@ -21,9 +21,9 @@
 
 ## Escalada de Privilégios via Print Spooler + Phantom DLL
 
-> Este documento demonstra uma cadeia completa de exploração utilizando **DLL Hijacking** combinado com a vulnerabilidade **:contentReference[oaicite:0]{index=0}** explorada pelo **:contentReference[oaicite:1]{index=1}**.
+> Este documento demonstra uma cadeia completa de exploração combinando **DLL Search Order Hijacking** com a vulnerabilidade **CVE-2020-1048 (PrintDemon)** no serviço **Windows Print Spooler**.
 >
-> A técnica permite que um usuário comum escale privilégios até **NT AUTHORITY\SYSTEM**, explorando falhas na validação de permissões do serviço de impressão do **:contentReference[oaicite:2]{index=2}**.
+> A exploração permite que um usuário autenticado eleve privilégios até **NT AUTHORITY\SYSTEM**, abusando de permissões inadequadas na manipulação de arquivos pelo serviço de impressão do Microsoft Windows.
 
 ---
 
@@ -54,11 +54,12 @@ Abuso de DLL inexistente (`ualapi.dll`) carregada pelo serviço de Fax (`fxssvc.
 
 ## 🛠 Ferramentas Envolvidas
 
-- :contentReference[oaicite:3]{index=3}
-- :contentReference[oaicite:4]{index=4}
-- PSInject (Reflective PE Injection)
-- Invoke-PrintDemon
-- WinRM (Windows Remote Management)
+- PowerShell Empire — Command & Control (C2) e pós-exploração
+- Evil-WinRM — Acesso remoto autenticado via WinRM
+- PSInject — Injeção refletiva de PE em memória
+- Invoke-PrintDemon — Exploração da CVE-2020-1048
+- WinRM — Canal de gerenciamento remoto do Windows
+
 
 ---
 
