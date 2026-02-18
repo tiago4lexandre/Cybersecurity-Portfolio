@@ -21,9 +21,9 @@
 ## Exploração da Vulnerabilidade SMBv1 no Windows
 
 > O **EternalBlue** é um dos exploits mais impactantes da história da cibersegurança moderna.  
-> Associado à vulnerabilidade **MS17-010** (CVE-2017-0144), ele explora uma falha crítica no protocolo **SMBv1 (Server Message Block)** do Windows, permitindo **execução remota de código (RCE)** sem autenticação.
+> Associado à vulnerabilidade **MS17-010 (CVE-2017-0144)**, ele explora uma falha crítica no protocolo **SMBv1 (Server Message Block)** do Windows, permitindo **execução remota de código (RCE)** sem autenticação.
 >
-> Vazado publicamente em 2017 pelo grupo **:contentReference[oaicite:0]{index=0}**, o exploit foi posteriormente utilizado em ataques globais como o ransomware **:contentReference[oaicite:1]{index=1}** e **:contentReference[oaicite:2]{index=2}**, causando bilhões em prejuízos e paralisando infraestruturas críticas ao redor do mundo.
+> Vazado publicamente em 2017 pelo grupo **Shadow Brokers**, o exploit foi posteriormente utilizado em ataques globais como o ransomware **WannaCry** e **NotPetya**, causando bilhões em prejuízos e paralisando infraestruturas críticas ao redor do mundo.
 >
 > O que tornou o EternalBlue devastador foi seu caráter **wormable**, permitindo propagação automática entre máquinas vulneráveis via porta TCP 445.
 
