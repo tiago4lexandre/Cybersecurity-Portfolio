@@ -30,6 +30,7 @@ const data = {
 		{ title: 'Gobuster', file: 'Ferramentas/GoBuster/README.md', slug: 'gobuster' },
 		{ title: 'FFUF', file: 'Ferramentas/FFUF/README.md', slug: 'ffuf' },
 		{ title: 'Hydra', file: 'Ferramentas/Hydra/README.md', slug: 'hydra' },
+		{ title: 'Hashcat', file: 'Ferramentas/Hashcat/README.md', slug: 'hashcat'},
 		{ title: 'John The Ripper', file: 'Ferramentas/John-The-Ripper/README.md', slug: 'john-the-ripper' },
 	],
 	labs: [
@@ -305,4 +306,5 @@ if (content) {
 // Inicializa o router
 
 router();
+
 
