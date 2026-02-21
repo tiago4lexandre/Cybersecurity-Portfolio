@@ -27,6 +27,7 @@ const data = {
 		{ title: 'Aircrack-ng', file: 'Network/Aircrack-ng/README.md', slug: 'aircrack-ng' },
 	],
 	tools: [
+		{ title: 'MSFvenom', file: 'Ferramentas/MSFvenom/README.md', slug: 'msfvenom' },
 		{ title: 'Gobuster', file: 'Ferramentas/GoBuster/README.md', slug: 'gobuster' },
 		{ title: 'FFUF', file: 'Ferramentas/FFUF/README.md', slug: 'ffuf' },
 		{ title: 'Hydra', file: 'Ferramentas/Hydra/README.md', slug: 'hydra' },
@@ -306,5 +307,6 @@ if (content) {
 // Inicializa o router
 
 router();
+
 
 
