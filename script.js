@@ -19,6 +19,7 @@ const data = {
 	],
 	windows: [
 		{ title: 'Windows Privilege Escalation', file: 'Windows/Windows-PrivilegeEscalation/README.md', slug: 'windows-privilege-escalation' },
+		{ title: 'Windows Active Directory', file: 'Windows/Active Directory/README.md', slug: 'active-directory' },
 		{ title: 'EternalBlue — MS17-010', file: 'Windows/EternalBlue/README.md', slug: 'eternalblue' },
 		{ title: 'Powershell-Empire & Starkiller', file: 'Windows/Powershell-Empire/README.md', slug: 'powershell-empire' },
 		{ title: 'DLL Hijacking + PrintDemon (CVE-2020-1048)', file: 'Windows/DLL-Hijacking/README.md', slug: 'dll-hijacking'},
@@ -308,6 +309,7 @@ if (content) {
 // Inicializa o router
 
 router();
+
 
 
 
