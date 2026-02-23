@@ -3,10 +3,13 @@ const menuToggle = document.querySelector('.menu-toggle');
 const menu = document.querySelector('.menu');
 
 const data = {
-	checklists: [
+	redteam: [
 		{ title: 'Pentest Checklist', file: 'Checklists/Pentest-Checklist/README.md', slug: 'pentest-checklist' },
 		{ title: 'Local File Inclusion e Remote File Inclusion', file: 'Checklists/LFI-RFI/README.md', slug: 'lfi-rfi' },
-		{ title, 'Server-Side Request Forgery', file: 'Checklists/SSRF/README.md', slug: 'ssrf' },
+		{ title: 'Server-Side Request Forgery', file: 'Checklists/SSRF/README.md', slug: 'ssrf' },
+	],
+	blueteam: [
+
 	],
 	cves: [
 		{ title: 'React2Shell — CVE-2025-55182', file: 'Vulnerabilidades/React2Shell/README.md', slug: 'react2shell' },
@@ -19,7 +22,7 @@ const data = {
 	],
 	windows: [
 		{ title: 'Windows Privilege Escalation', file: 'Windows/Windows-PrivilegeEscalation/README.md', slug: 'windows-privilege-escalation' },
-		{ title: 'Windows Active Directory', file: 'Windows/Active Directory/README.md', slug: 'active-directory' },
+		{ title: 'Windows Active Directory', file: 'Windows/ActiveDirectory/README.md', slug: 'active-directory' },
 		{ title: 'EternalBlue — MS17-010', file: 'Windows/EternalBlue/README.md', slug: 'eternalblue' },
 		{ title: 'Powershell-Empire & Starkiller', file: 'Windows/Powershell-Empire/README.md', slug: 'powershell-empire' },
 		{ title: 'DLL Hijacking + PrintDemon (CVE-2020-1048)', file: 'Windows/DLL-Hijacking/README.md', slug: 'dll-hijacking'},
