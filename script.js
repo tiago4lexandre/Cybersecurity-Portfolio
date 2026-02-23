@@ -4,9 +4,9 @@ const menu = document.querySelector('.menu');
 
 const data = {
 	redteam: [
-		{ title: 'Pentest Checklist', file: 'Checklists/Pentest-Checklist/README.md', slug: 'pentest-checklist' },
-		{ title: 'Local File Inclusion e Remote File Inclusion', file: 'Checklists/LFI-RFI/README.md', slug: 'lfi-rfi' },
-		{ title: 'Server-Side Request Forgery', file: 'Checklists/SSRF/README.md', slug: 'ssrf' },
+		{ title: 'Pentest Checklist', file: 'RedTeam/Pentest-Checklist/README.md', slug: 'pentest-checklist' },
+		{ title: 'Local File Inclusion e Remote File Inclusion', file: 'RedTeam/LFI-RFI/README.md', slug: 'lfi-rfi' },
+		{ title: 'Server-Side Request Forgery', file: 'RedTeam/SSRF/README.md', slug: 'ssrf' },
 	],
 	blueteam: [
 
