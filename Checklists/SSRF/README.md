@@ -67,21 +67,6 @@
 > A exploração não autorizada de sistemas é ilegal e pode resultar em responsabilização civil e criminal.
 
 ---
-
-## 🧠 Contextualização Estratégica
-
-O SSRF deixou de ser apenas uma vulnerabilidade de aplicação web para se tornar um vetor crítico de comprometimento em arquiteturas modernas baseadas em microserviços e computação em nuvem.
-
-Em ambientes cloud, especialmente em provedores como:
-- Amazon Web Services (AWS)
-- Google Cloud Platform (GCP)
-- Microsoft Azure
-
-o SSRF pode permitir acesso a **endpoints de metadados**, credenciais temporárias e serviços internos normalmente inacessíveis pela internet.
-
-Essa característica transforma o SSRF em uma vulnerabilidade com potencial de **elevação drástica de criticidade**, muitas vezes evoluindo de um achado "médio" para "crítico".
-
----
 # SSRF (Server-Side Request Forgery)
 
 ## 1. Introdução
@@ -128,6 +113,8 @@ O problema surge quando a aplicação permite que o **usuário controle total ou
                                           ↓
 [Atacante] ← Resposta da aplicação contendo dados internos
 ```
+
+![Server-Side Request Forgery](https://my.f5.com/manage/servlet/rtaImage?eid=ka0Po000000ZEzN&feoid=00N1T00000AOnlF&refid=0EMPo00000VxBIX)
 
 ### 2.3 Exemplo Simples e Didático
 
@@ -185,6 +172,8 @@ http://localhost:4567/?url=http://169.254.169.254/latest/meta-data/
 ```
 
 O conteúdo dos arquivos ou metadados é retornado na resposta.
+
+![Reflected SSRF](https://www.imperva.com/learn/wp-content/uploads/sites/13/2021/12/How-Server-SSRF-works.png)
 
 #### SSRF Cego (Blind)
 
