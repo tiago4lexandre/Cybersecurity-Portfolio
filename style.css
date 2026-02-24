@@ -383,3 +383,281 @@ code.language-sh {
   vertical-align: middle;
   margin: 8px 0;
 }
+
+/* ===== ESTILOS PARA TABELAS MARKDOWN ===== */
+
+/* Container para tabelas com scroll horizontal */
+#content table {
+    width: auto;
+    max-width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem auto;
+    font-size: 14px;
+    line-height: 1.5;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #333 #000;
+    min-width: 50%;
+}
+
+#content table.full-width {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Estilização da scrollbar para webkit (Chrome, Safari, Edge) */
+#content table::-webkit-scrollbar {
+    height: 8px;
+    background: #1a1a1a;
+}
+
+#content table::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+#content table::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* Células da tabela */
+#content th,
+#content td {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+    white-space: normal;
+    min-width: 120px;
+}
+
+/* Cabeçalho da tabela */
+#content th {
+    background: #0a0a0a;
+    font-weight: bold;
+    color: #00ff00; /* Verde característico */
+    border-bottom: 2px solid #00ff00;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+/* Linhas alternadas (zebrado) */
+#content tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+#content tbody tr:hover {
+    background: rgba(0, 255, 0, 0.05);
+    transition: background 0.2s ease;
+}
+
+/* Primeira coluna em destaque (opcional) */
+#content td:first-child,
+#content th:first-child {
+    padding-left: 20px;
+    border-left: 2px solid transparent;
+}
+
+#content tr:hover td:first-child {
+    border-left-color: #00ff00;
+}
+
+/* Células com alinhamento especial */
+#content td.center,
+#content th.center {
+    text-align: center;
+}
+
+#content td.right,
+#content th.right {
+    text-align: right;
+}
+
+/* Tabelas com bordas mais suaves (alternativo) */
+#content table.clean {
+    border: none;
+}
+
+#content table.clean th,
+#content table.clean td {
+    border: none;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Responsividade para telas médias */
+@media (max-width: 768px) {
+    #content table {
+        font-size: 13px;
+        margin: 1rem 0;
+    }
+    
+    #content th,
+    #content td {
+        padding: 8px 12px;
+        min-width: 100px;
+    }
+    
+    #content th {
+        font-size: 12px;
+    }
+}
+
+/* Para telas muito pequenas, mantém scroll horizontal */
+@media (max-width: 480px) {
+    #content table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    #content th,
+    #content td {
+        min-width: 90px;
+        padding: 8px 10px;
+        white-space: nowrap;
+    }
+    
+    /* Permite quebra de texto em células específicas */
+    #content td.break,
+    #content th.break {
+        white-space: normal;
+        min-width: 150px;
+    }
+}
+
+/* Tabelas dentro de blocos de código? Nunca! */
+#content pre table,
+#content code table {
+    display: none;
+}
+
+/* Bordas arredondadas para tabelas (opcional) */
+#content table:not(.clean) {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Cabeçalho fixo visualmente */
+#content thead {
+    position: sticky;
+    top: 0;
+    background: #000;
+    z-index: 1;
+}
+
+#content thead th {
+    position: sticky;
+    top: 0;
+    background: #0a0a0a;
+    box-shadow: 0 2px 2px -1px rgba(0, 255, 0, 0.1);
+}
+
+/* Linhas de totais ou destaques */
+#content tfoot td {
+    background: #0a0a0a;
+    border-top: 2px solid #00ff00;
+    font-weight: bold;
+}
+
+/* Células com valores especiais */
+#content td.highlight {
+    background: rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+    font-weight: bold;
+}
+
+#content td.warning {
+    background: rgba(255, 100, 100, 0.1);
+    color: #ff6b6b;
+}
+
+#content td.success {
+    background: rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+}
+
+#content td.info {
+    background: rgba(100, 150, 255, 0.1);
+    color: #6b9fff;
+}
+
+/* Tabelas muito largas */
+#content table.wide {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+/* Para tabelas que devem quebrar linhas */
+#content table.wrap {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#content table.wrap td,
+#content table.wrap th {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* Títulos de tabela (se houver caption) */
+#content table caption {
+    text-align: left;
+    margin-bottom: 8px;
+    color: #888;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* Linhas de separação quando não há bordas */
+#content table.separator tbody tr:not(:last-child) {
+    border-bottom: 1px dashed #333;
+}
+
+/* Animações suaves */
+#content table {
+    transition: all 0.2s ease;
+}
+
+/* Suporte a tabelas com primeiro cabeçalho fixo */
+#content table.fixed-first th:first-child,
+#content table.fixed-first td:first-child {
+    position: sticky;
+    left: 0;
+    background: #000;
+    z-index: 2;
+}
+
+#content table.fixed-first th:first-child {
+    background: #0a0a0a;
+    z-index: 3;
+}
+
+/* Efeito de brilho no hover das células */
+#content td:hover {
+    background: rgba(0, 255, 0, 0.08);
+    transition: background 0.1s ease;
+}
+
+/* Alinhamento para números */
+#content td.number,
+#content td.numeric {
+    text-align: right;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.5px;
+}
+
+/* Células de código dentro de tabelas */
+#content td code {
+    background: #1a1a1a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    border: 1px solid #333;
+}
