@@ -9,7 +9,7 @@ const data = {
 		{ title: 'Server-Side Request Forgery', file: 'RedTeam/SSRF/README.md', slug: 'ssrf' },
 	],
 	blueteam: [
-
+		{ title: 'Relatório de Alerta para SOC L1', file: 'BlueTeam/RelatóriosSOCL1/README.md', slug: 'realtorioSOCL1'},
 	],
 	cves: [
 		{ title: 'React2Shell — CVE-2025-55182', file: 'Vulnerabilidades/React2Shell/README.md', slug: 'react2shell' },
@@ -312,6 +312,7 @@ if (content) {
 // Inicializa o router
 
 router();
+
 
 
 
