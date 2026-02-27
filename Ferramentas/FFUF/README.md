@@ -1004,6 +1004,302 @@ ffuf -u http://testphp.vulnweb.com/FUZZ \
 ```
 
 ---
+## Mapeamento de HTTP Requests
+
+### Como Traduzir requisições HTTP capturadas para comandos FFUF precisos
+
+Um dos maiores desafios ao usar o FFUF é saber exatamente quais partes de uma requisição HTTP precisam ser incluídas no comando para que o fuzzing funcione corretamente. Esta seção apresenta uma metodologia sistemática para mapear requisições HTTP completas para parâmetros do FFUF.
+
+### 1. Anatomia de uma Requisição HTTP
+
+Antes de mapear, é essencial entender os componentes de uma requisição HTTP:
+
+```http
+POST /labs/verbose_login/functions.php HTTP/1.1
+Host: 10.67.144.15
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+X-Requested-With: XMLHttpRequest
+Accept: application/json, text/javascript, */*; q=0.01
+Origin: http://10.67.144.15
+Referer: http://10.67.144.15/labs/verbose_login/
+Cookie: PHPSESSID=32o84ov3m3kfrjdduncpl5n30t
+Content-Length: 59
+
+username=canderson@gmail.com&password=test&function=login
+```
+
+|Componente|Exemplo|Flag FFUF|
+|---|---|---|
+|Método|`POST`|`-X POST`|
+|URL Path|`/labs/verbose_login/functions.php`|`-u http://10.67.144.15/labs/verbose_login/functions.php`|
+|Headers|`Content-Type: application/x-www-form-urlencoded`|`-H "Content-Type: application/x-www-form-urlencoded"`|
+|Cookies|`PHPSESSID=32o84ov3m3kfrjdduncpl5n30t`|`-b "PHPSESSID=32o84ov3m3kfrjdduncpl5n30t"`|
+|Body|`username=canderson@gmail.com&password=test&function=login`|`-d "username=FUZZ&password=test&function=login"`|
+
+### 2. Metodologia Passo a Passo
+
+#### Passo 1: Capture a Requisição no Burp Suite ou Navegador
+
+Utilize o Burp Suite, OWASP ZAP, ou as Developer Tools do navegador para capturar uma requisição completa.
+
+**No Burp Suite:**
+
+1. Navegue até o alvo
+2. Encontre a requisição no Proxy → HTTP History
+3. Clique com botão direito → Copy as curl command
+
+**No Chrome/Firefox:**
+
+1. F12 → Network tab
+2. Clique na requisição desejada
+3. Botão direito → Copy → Copy as cURL
+
+#### Passo 2: Analise os Componentes Críticos
+
+Nem todos os componentes são obrigatórios. Classifique cada parte:
+
+```bash
+# Curl capturado (exemplo)
+curl -X POST 'http://10.67.144.15/labs/verbose_login/functions.php' \
+	-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+	-H 'X-Requested-With: XMLHttpRequest' \
+	-H 'Accept: application/json, text/javascript, */*; q=0.01' \
+	-H 'Origin: http://10.67.144.15' \
+	-H 'Referer: http://10.67.144.15/labs/verbose_login/' \
+	-H 'Cookie: PHPSESSID=32o84ov3m3kfrjdduncpl5n30t' \
+	--data-raw 'username=canderson@gmail.com&password=test&function=login'
+```
+
+**Matriz de Decisão para Headers:**
+
+|Header|Obrigatório?|Motivo|
+|---|---|---|
+|`Host`|❌|FFUF adiciona automaticamente baseado na URL|
+|`Content-Type`|✅|Essencial para interpretação do corpo da requisição|
+|`Content-Length`|❌|FFUF calcula automaticamente|
+|`Cookie`|⚠️|Necessário se a aplicação usa sessão|
+|`X-Requested-With`|⚠️|Necessário se app espera chamadas AJAX|
+|`Origin`/`Referer`|⚠️|Pode ser necessário para evitar bloqueios CORS/CSRF|
+|`Accept`|⚠️|Se o servidor retorna formatos específicos|
+|`User-Agent`|⚠️|Pode ser necessário se houver bloqueio por UA|
+|`Accept-Encoding`|❌|FFUF não comprime por padrão|
+|`Connection`|❌|Gerenciado automaticamente|
+
+#### Passo 3: Traduza para FFUF
+
+**Estrutura Básica de Tradução:**
+
+```bash
+# Template genérico
+ffuf -w <wordlist> \
+     -X <MÉTODO> \
+     -u <URL_COMPLETA> \
+     -H "<HEADER1>" \
+     -H "<HEADER2>" \
+     -b "<COOKIE>" \
+     -d "<CORPO>" \
+     -t <THREADS>
+```
+
+### 3. Exemplos Práticos de Mapeamento
+
+#### Exemplo 1: Login Básico
+
+**Requisição Original:**
+
+```http
+POST /login.php HTTP/1.1
+Host: example.com
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=123456
+```
+
+**Mapeamento FFUF:**
+
+```bash
+ffuf -w users.txt \
+     -X POST \
+     -u http://example.com/login.php \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "username=FUZZ&password=test" \
+     -t 50
+```
+
+#### Exemplo 2: API com JSON e Token (Requer Autenticação)
+
+**Requisição Original:**
+
+```http
+POST /api/v1/users HTTP/1.1
+Host: api.example.com
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+Content-Type: application/json
+Cookie: session=abc123def456
+
+{"email":"test@example.com","role":"admin"}
+```
+
+**Mapeamento FFUF:**
+
+```bash
+ffuf -w emails.txt \
+     -X POST \
+     -u https://api.example.com/api/v1/users \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" \
+     -H "Content-Type: application/json" \
+     -b "session=abc123def456" \
+     -d '{"email":"FUZZ@example.com","role":"admin"}' \
+     -t 30
+```
+
+#### Exemplo 3: Upload de Arquivo (Multipart/Form-Data)
+
+**Requisição Original:**
+
+```http
+POST /upload.php HTTP/1.1
+Host: example.com
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+X-CSRF-Token: 8f7d9a3b2c1e5f6g7h8i9j0k
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+[conteúdo do arquivo]
+------WebKitFormBoundary--
+```
+
+**Mapeamento FFUF (simplificado):**
+
+```bash
+ffuf -w filenames.txt \
+     -X POST \
+     -u http://example.com/upload.php \
+     -H "X-CSRF-Token: 8f7d9a3b2c1e5f6g7h8i9j0k" \
+     -F "file=@FUZZ" \
+     -t 20
+```
+
+### 4. Identificando e Configurando o Ponto de Injeção
+
+O FFUF usa placeholders para indicar onde inserir os payloads:
+
+|Placeholder|Uso|Exemplo|
+|---|---|---|
+|`FUZZ`|Padrão|`-d "username=FUZZ&password=test"`|
+|`FUZ2Z`|Segundo payload|`-d "user=FUZZ&pass=FUZ2Z"`|
+|`FUZ3Z`|Terceiro payload|`-d "user=FUZZ&pass=FUZ2Z&token=FUZ3Z"`|
+|`§`|Alternativo|`-d "username=§&password=test"`|
+
+**Como definir placeholders:**
+
+1. Identifique onde o payload deve ser inserido
+2. Substitua o valor original por `FUZZ` (ou outro placeholder)
+3. Múltiplos placeholders para ataques combinados
+
+```bash
+# Exemplo de múltiplos placeholders
+ffuf -w users.txt:USER \
+     -w passwords.txt:PASS \
+     -X POST \
+     -u http://example.com/login \
+     -d "username=USER&password=PASS&function=login"
+```
+
+### 5. Testando o Mapeamento com Curl
+
+Antes de executar o FFUF, sempre teste com curl para confirmar:
+
+```bash
+# 1. Teste com valor original
+curl -X POST 'http://10.67.144.15/labs/verbose_login/functions.php' \
+     -H 'Content-Type: application/x-www-form-urlencoded' \
+     -d 'username=test@example.com&password=test&function=login' \
+     -v
+
+# 2. Verifique resposta e status code
+# 3. Se funcionar, adapte para FFUF substituindo valores
+```
+
+### 6. Depuração: Quando o FFUF não Funciona
+
+**Cenário 1: Status 301/302 (Redirecionamento)**
+
+```bash
+# Problema: URL errada ou falta de trailing slash
+ffuf -u http://example.com/api/FUZZ  # ❌ Pode redirecionar
+ffuf -u http://example.com/api/FUZZ/ # ✅ Com trailing slash
+```
+
+**Cenário 2: Status 403/401 (Autenticação Necessária)**
+
+```bash
+# Problema: Faltando headers de autenticação ou cookies
+# Solução: Adicionar headers completos da requisição original
+ffuf -H "Authorization: Bearer token" -b "session=abc123"
+```
+
+**Cenário 3: Status 400 (Bad Request)**
+
+```bash
+# Problema: Content-Type incorreto ou body mal formatado
+# Solução: Verificar se Content-Type corresponde ao body
+# Para JSON:
+-H "Content-Type: application/json" -d '{"key":"FUZZ"}'
+# Para form-urlencoded:
+-H "Content-Type: application/x-www-form-urlencoded" -d "key=FUZZ"
+```
+
+### 7. Checklist de Mapeamento
+
+Use esta checklist para garantir que seu mapeamento está completo:
+
+- **URL correta** (incluindo path completo e trailing slash quando necessário)
+- **Método HTTP** (GET/POST/PUT/DELETE)
+- **Content-Type** adequado ao body
+- **Cookies** (se a aplicação usa sessão)
+- **Headers de autenticação** (Bearer tokens, API keys)
+- **Headers de contexto** (Origin, Referer, X-Requested-With)
+- **Body** com placeholders nos locais corretos
+- **Wordlist** apropriada para o tipo de ataque
+- **Filtros** baseados na análise das respostas
+
+### 8. Exemplo Completo: Depuração Passo a Passo
+
+```bash
+# PASSO 1: Capturar requisição funcional com curl
+curl -X POST 'http://10.67.144.15/labs/verbose_login/functions.php' \
+     -H 'Content-Type: application/x-www-form-urlencoded' \
+     -H 'X-Requested-With: XMLHttpRequest' \
+     -b 'PHPSESSID=32o84ov3m3kfrjdduncpl5n30t' \
+     -d 'username=test&password=test&function=login' \
+     -v
+
+# PASSO 2: Testar com placeholder manualmente
+curl -X POST 'http://10.67.144.15/labs/verbose_login/functions.php' \
+     -H 'Content-Type: application/x-www-form-urlencoded' \
+     -b 'PHPSESSID=32o84ov3m3kfrjdduncpl5n30t' \
+     -d 'username=admin&password=test&function=login' \
+     -v
+
+# PASSO 3: Converter para FFUF
+ffuf -w users.txt \
+     -X POST \
+     -u 'http://10.67.144.15/labs/verbose_login/functions.php' \
+     -H 'Content-Type: application/x-www-form-urlencoded' \
+     -H 'X-Requested-With: XMLHttpRequest' \
+     -b 'PHPSESSID=32o84ov3m3kfrjdduncpl5n30t' \
+     -d 'username=FUZZ&password=test&function=login' \
+     -t 20 \
+     -v
+
+# PASSO 4: Analisar respostas e adicionar filtros
+ffuf [mesmos parâmetros] -fs 364,365 -c
+```
+
+---
 ## Dicas e Boas Práticas
 
 ### 1. Wordlists Recomendadas
