@@ -17,7 +17,7 @@ const data = {
 		{ title: 'React2Shell — CVE-2025-55182', file: 'Vulnerabilidades/React2Shell/README.md', slug: 'react2shell' },
 		{ title: 'Dirty Pipe — CVE-2022-0847', file: 'Vulnerabilidades/DirtyPipez/README.md', slug: 'dirty-pipe' },
 		{ title: 'Pwnkit — CVE-2021-4034', file: 'Vulnerabilidades/Pwnkit/README.md', slug: 'pwnkit' },
-		{ title: 'WordPress — CVE-2021-29447', file: 'Vulnerabilidades/Wordpress/README.md', slug: 'wordpress' },
+		{ title: 'WordPress — CVE-2021-29447', file: 'Vulnerabilidades/WordPress/README.md', slug: 'wordpress' },
 	],
 	linux: [
 		{ title: 'Linux Privilege Escalation', file: 'Linux/Linux-Privilege-Escalation/README.md', slug: 'linux-privilege-escalation' },
@@ -315,6 +315,7 @@ if (content) {
 // Inicializa o router
 
 router();
+
 
 
 
