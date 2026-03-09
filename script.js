@@ -5,7 +5,8 @@ const menu = document.querySelector('.menu');
 const data = {
 	redteam: [
 		{ title: 'Pentest Checklist', file: 'RedTeam/Pentest-Checklist/README.md', slug: 'pentest-checklist' },
-		{ title: 'API SECURITY', file: 'RedTeam/API/README.md', slug: 'api-pentest' },
+		{ title: 'API Security', file: 'RedTeam/API/README.md', slug: 'api-pentest' },
+		{ title: 'Firewall Evasion', file 'RedTeam/Firewalls/README.md', slug: 'firewalls' },
 		{ title: 'Local File Inclusion e Remote File Inclusion', file: 'RedTeam/LFI-RFI/README.md', slug: 'lfi-rfi' },
 		{ title: 'Server-Side Request Forgery', file: 'RedTeam/SSRF/README.md', slug: 'ssrf' },
 	],
@@ -315,6 +316,7 @@ if (content) {
 // Inicializa o router
 
 router();
+
 
 
 
