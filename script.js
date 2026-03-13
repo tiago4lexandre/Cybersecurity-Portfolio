@@ -16,6 +16,7 @@ const data = {
 	],
 	cves: [
 		{ title: 'CVE-2025-55182 — React2Shell', file: 'Vulnerabilidades/React2Shell/README.md', slug: 'react2shell' },
+		{ title: 'CVE-2024-21413 — Moniker Link', file: 'Vulnerabilidades/MonikerLink/README.md', slug: 'monikerlink' },
 		{ title: 'CVE-2022-0847 — Dirty Pipe ', file: 'Vulnerabilidades/DirtyPipez/README.md', slug: 'dirty-pipe' },
 		{ title: 'CVE-2021-29447 — WordPress', file: 'Vulnerabilidades/WordPress/README.md', slug: 'wordpress' },
 		{ title: 'CVE-2021-4034 —  Pwnkit', file: 'Vulnerabilidades/Pwnkit/README.md', slug: 'pwnkit' },
@@ -316,6 +317,7 @@ if (content) {
 // Inicializa o router
 
 router();
+
 
 
 
