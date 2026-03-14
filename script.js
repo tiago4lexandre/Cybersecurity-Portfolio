@@ -7,8 +7,9 @@ const data = {
 		{ title: 'Pentest Checklist', file: 'RedTeam/Pentest-Checklist/README.md', slug: 'pentest-checklist' },
 		{ title: 'API Security', file: 'RedTeam/API/README.md', slug: 'api-pentest' },
 		{ title: 'Firewall Evasion', file: 'RedTeam/Firewalls/README.md', slug: 'firewalls' },
-		{ title: 'Local File Inclusion e Remote File Inclusion', file: 'RedTeam/LFI-RFI/README.md', slug: 'lfi-rfi' },
-		{ title: 'Server-Side Request Forgery', file: 'RedTeam/SSRF/README.md', slug: 'ssrf' },
+		{ title: 'Local File Inclusion e Remote File Inclusion (LFI & RFI)', file: 'RedTeam/LFI-RFI/README.md', slug: 'lfi-rfi' },
+		{ title: 'Cross-Site Scripting (XSS)', file: 'RedTeam/XSS/README.md', slug: 'xss' },
+		{ title: 'Server-Side Request Forgery (SSRF)', file: 'RedTeam/SSRF/README.md', slug: 'ssrf' },
 	],
 	blueteam: [
 		{ title: 'Relatório de Alerta para SOC L1', file: 'BlueTeam/RelatóriosSOCL1/README.md', slug: 'realtorioSOCL1' },
