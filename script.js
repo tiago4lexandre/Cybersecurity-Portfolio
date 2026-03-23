@@ -12,6 +12,7 @@ const data = {
 		{ title: 'Server-Side Request Forgery (SSRF)', file: 'RedTeam/SSRF/README.md', slug: 'ssrf' },
 	],
 	blueteam: [
+		{ title: 'Splunk Analysis', file: 'BlueTeam/Splunk/README.md', slug: 'splunk1' },
 		{ title: 'Relatório de Alerta para SOC L1', file: 'BlueTeam/RelatóriosSOCL1/README.md', slug: 'realtorioSOCL1' },
 		{ title: 'SOC Simulator: Introduction to Phishing' , file: 'BlueTeam/PhishingSOC/README.md', slug: 'phishingSOC' },
 	],
