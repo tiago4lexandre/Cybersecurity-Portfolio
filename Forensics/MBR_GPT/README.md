@@ -1,35 +1,89 @@
-# 🔍 Análise de MBR e GPT
+<!-- ===================================== -->
+<!--        MBR & GPT FORENSIC GUIDE       -->
+<!-- ===================================== -->
 
-> _"Antes mesmo do sistema operacional existir, já existe um ponto de confiança — ou de comprometimento."_  
+<p align="center">
+  <img src="https://img.shields.io/badge/Topic-Disk%20Forensics-black?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Focus-MBR%20%7C%20GPT-blue?style=for-the-badge">
+</p>
 
-## 🧠 Visão Geral
+<p align="center">
+  <img src="https://img.shields.io/badge/Layer-Low%20Level%20Storage-red?style=flat-square">
+  <img src="https://img.shields.io/badge/Discipline-Digital%20Forensics-purple?style=flat-square">
+  <img src="https://img.shields.io/badge/Security-Boot%20Integrity-green?style=flat-square">
+  <img src="https://img.shields.io/badge/Level-Intermediate%20%E2%86%92%20Advanced-yellow?style=flat-square">
+</p>
 
-Toda interação com um sistema computacional começa muito antes da interface gráfica, dos arquivos ou até mesmo do login do usuário. Existe uma camada invisível, crítica e frequentemente negligenciada: **a estrutura de inicialização do disco**.
+---
 
-É nesse nível que residem dois componentes fundamentais:
+# 💽 Análise de MBR e GPT
+## Guia Técnico de Estrutura de Disco, Boot e Análise Forense
 
-- **MBR (Master Boot Record)**
-- **GPT (GUID Partition Table)**
-
-Eles não apenas organizam o armazenamento — eles **definem como o sistema nasce**.
+> Antes do sistema operacional carregar, antes de qualquer antivírus atuar e antes mesmo do usuário interagir…
+>
+> existe uma camada crítica e frequentemente negligenciada: **o processo de inicialização do disco**.
+>
+> É nesse nível que estruturas como **MBR** e **GPT** operam — controlando como os dados são organizados e como o sistema ganha vida.
+>
+> Para analistas de segurança e forense, entender essas estruturas significa:
+>
+> - Investigar sistemas que não inicializam
+> - Detectar manipulações maliciosas no boot
+> - Recuperar dados de discos corrompidos
+> - Identificar ataques avançados como bootkits e ransomware de baixo nível
 
 ---
 
-## ⚠️ Perspectiva de Segurança
+## 🎯 Objetivo do Documento
 
-Por operar em um nível tão baixo, o MBR/GPT se torna um dos pontos mais sensíveis do sistema:
+Este documento foi desenvolvido para:
 
-- Executado **antes do sistema operacional**
-- Fora do alcance de muitas ferramentas de segurança
-- Ideal para persistência avançada de ameaças
-
-Isso os torna alvos clássicos de:
-
-- **Bootkits**
-- **Ransomware de baixo nível**
-- **Ataques de corrupção estrutural**
+- Explicar a estrutura interna de MBR e GPT em nível técnico
+- Demonstrar como o processo de boot interage com essas estruturas
+- Capacitar a análise manual de discos usando ferramentas forenses
+- Identificar sinais de corrupção ou manipulação maliciosa
+- Comparar limitações e vantagens entre os dois esquemas
 
 ---
+
+## ⚙️ Contexto Técnico
+
+Todo sistema computacional depende de um mecanismo confiável para:
+
+- Localizar partições no disco
+- Identificar qual partição é inicializável
+- Transferir controle para o sistema operacional
+
+Esse mecanismo é definido pelo **esquema de particionamento**, sendo os principais:
+
+- **MBR (Master Boot Record)** → legado, simples, porém limitado
+- **GPT (GUID Partition Table)** → moderno, robusto e resiliente
+
+Ambos atuam como um **mapa crítico do disco**, armazenando metadados essenciais para:
+
+- Estrutura de partições
+- Endereçamento lógico (LBA)
+- Processo de inicialização
+
+---
+
+## 🧠 Mentalidade Forense
+
+Durante a análise de discos, o analista deve pensar como:
+
+- Um engenheiro → entendendo estrutura e funcionamento
+- Um investigador → identificando inconsistências
+- Um atacante → antecipando técnicas de evasão
+
+Perguntas-chave incluem:
+
+- O bootloader foi alterado?
+- A tabela de partições está íntegra?
+- Há inconsistências entre LBA e tamanho real?
+- Existe evidência de manipulação manual ou malware?
+
+---
+
 # Análise de MBR e GPT
 
 ## Introdução
