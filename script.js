@@ -19,8 +19,7 @@ const data = {
 	],
 	forensics: [
 		{ title: 'Análise de MBR e GPT', file: 'Forensics/MBR_GPT/README.md', slug:'mbr-gpt' }
-	].
-	
+	],
 	cves: [
 		{ title: 'CVE-2025-55182 — React2Shell', file: 'Vulnerabilidades/React2Shell/README.md', slug: 'react2shell' },
 		{ title: 'CVE-2024-21413 — Moniker Link', file: 'Vulnerabilidades/MonikerLink/README.md', slug: 'monikerlink' },
