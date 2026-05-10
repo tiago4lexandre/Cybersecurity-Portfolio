@@ -540,3 +540,20 @@ sudo grubby --update-kernel=ALL --remove-args="initcall_blacklist=algif_aead_ini
 > **Lembrete:** O `modprobe` blacklist é um **controle provisório eficaz** no Ubuntu e Debian, mas **não é um substituto para o patch**. A correção permanente é a atualização do kernel.
 
 ----
+## Referências
+
+1. Lee, T. (2026). _Copy Fail: Four bytes to root_. Xint Research Blog. [https://xint.io/blog/copy-fail-linux-distributions](https://xint.io/blog/copy-fail-linux-distributions)
+2. The Linux Kernel Archives. (2026). *Commit a664bf3d603d: algif_aead: fix in-place crypto for splice() paths*. [kernel.org](https://kernel.org)
+3. MITRE Corporation. (2026). *CVE-2026-31431*. National Vulnerability Database. [https://nvd.nist.gov/vuln/detail/CVE-2026-31431](https://nvd.nist.gov/vuln/detail/CVE-2026-31431)
+4. MITRE ATT&CK®. (2026). _Techniques_. Enterprise Matrix. [https://attack.mitre.org/techniques/](https://attack.mitre.org/techniques/)
+    - T1068: Exploitation for Privilege Escalation
+    - T1548.001: Setuid and Setgid (Abuse Elevation Control Mechanism)
+    - T1611: Escape to Host
+    - T1070: Indicator Removal (File Deletion)
+
+5. TryHackMe. (2026). *CVE-2026-31431: Copy-Fail* [Interactive lab]. [https://tryhackme.com/room/cve202631341](https://tryhackme.com/room/cve202631341)
+6. Docker, Inc. (2026). _Falco Runtime Security_. [https://falco.org/docs/rules/](https://falco.org/docs/rules/)
+7. Linux Audit Project. (2026). *auditd(8) - Linux manual page*. [man7.org](https://man7.org)
+8. Corbet, J. (2017, November 13). _The 4.14 kernel is released_. [LWN.net](https://LWN.net). [https://lwn.net/Articles/737902/](https://lwn.net/Articles/737902/) (Contexto sobre o commit 72548b093ee3 – otimização in-place no algif_aead)
+9. Google Cloud Threat Intelligence. (2024, January 30). _UNC4990 Evolution: Uncovering the Hidden Depths of USB Malware_. Google Cloud Blog. (Contexto sobre ataques via dispositivos USB, mencionado na introdução do seu documento original)
+10. Falco Project. (2026). _Falco Rules Reference_. [https://falco.org/docs/rules/supported-fields/](https://falco.org/docs/rules/supported-fields/)
