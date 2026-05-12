@@ -13,6 +13,7 @@ const data = {
 		{ title: 'Weaponization', file: 'RedTeam/Weaponization/README.md', slug: 'weaponization' }
 	],
 	blueteam: [
+		{ title: 'Wazuh', file: 'BlueTeam/WAZUH1/README.md', slug: 'wazuh1' },
 		{ title: 'Splunk Analysis', file: 'BlueTeam/SPLUNK1/README.md', slug: 'splunk1' },
 		{ title: 'Splunk Dashboards & Reports', file: 'BlueTeam/SPLUNK2/README.md', slug: 'splunk2' },
 		{ title: 'Splunk Data Manipulation', file: 'BlueTeam/SPLUNK3/README.md', slug: 'splunk3' },
