@@ -541,7 +541,185 @@ A consulta atribui:
 ![697](https://tryhackme-images.s3.amazonaws.com/user-uploads/616945d482ef350052080da1/room-content/616945d482ef350052080da1-1761986963855.svg)
 
 ---
-## 10. Conclusão
+## 10. Detecção de Anomalias
+
+### Visão Geral
+
+Ao investigar grandes conjuntos de dados (ex: logins de VPN, acessos a arquivos, conexões de rede), você frequentemente precisa identificar rapidamente **outliers** — eventos que parecem suspeitos em comparação com os demais.
+
+**Cenário exemplo:** Um conjunto de dados com **2.000 logins de VPN** contendo apenas quatro campos:
+
+- Timestamp do login
+- Nome do usuário
+- IP de origem
+- País de origem
+
+**Desafio:** Como identificar logins de países inesperados quando as estatísticas de campo não mostram anomalias óbvias?
+
+![https://tryhackme-images.s3.amazonaws.com/user-uploads/678ecc92c80aa206339f0f23/room-content/678ecc92c80aa206339f0f23-1774320082276.png](https://tryhackme-images.s3.amazonaws.com/user-uploads/678ecc92c80aa206339f0f23/room-content/678ecc92c80aa206339f0f23-1774320082276.png)
+### 10.1 Detectando Outliers por País
+
+**Contexto de negócio:** Para um usuário baseado nos EUA, login dos EUA é esperado. Mas para um usuário baseado na UE, login dos EUA pode ser um forte sinal de intrusão ou uso de VPN.
+
+#### Comandos Splunk Utilizados
+
+|Comando|Função|
+|---|---|
+|`eventstats`|Similar ao `stats`, mas **preserva os eventos brutos** para processamento posterior|
+|`where`|Similar ao `search`, mas **mais poderoso** para filtros complexos|
+|`eval`|Cria novos campos ou transforma valores existentes|
+|`table`|Exibe apenas os campos especificados|
+
+#### Consulta para Detecção por País
+
+```text
+index=vpnlogs
+| eventstats count as logins_by_user by user 
+| eventstats count as logins_by_user_country by user src_country 
+| eval country_freq = logins_by_user_country / logins_by_user
+| where country_freq < 0.1
+| table _time user src_ip src_country country_freq
+```
+
+#### Explicação Passo a Passo
+
+|Linha / Comando|Resultado|Exemplo (usuário kbrown)|
+|---|---|---|
+|**Linha 2:** `eventstats count as logins_by_user by user`|Total de logins por usuário|`logins_by_user = 200`|
+|**Linha 3:** `eventstats count as logins_by_user_country by user src_country`|Logins por usuário **e** país de origem|Para kbrown + Áustria: `logins_by_user_country = 1`|
+|**Linha 4:** `eval country_freq = logins_by_user_country / logins_by_user`|Frequência de logins por país (0 = raro, 1 = comum)|`country_freq = 1 ÷ 200 = 0,005` (muito raro!)|
+|**Linha 5:** `where country_freq < 0.1`|Inclui apenas pares usuário-país **raros**|0,005 < 0,1 → **incluído**|
+|**Linha 6:** `table ...`|Exibe os outliers|Apenas 2 eventos de 2.000!|
+
+> **Definição de limiar:** O valor `0.1` (10%) é chamado de **limiar (threshold)**. Pares usuário-país com frequência abaixo deste valor são considerados anômalos.
+
+#### Resultado Esperado
+
+![https://tryhackme-images.s3.amazonaws.com/user-uploads/678ecc92c80aa206339f0f23/room-content/678ecc92c80aa206339f0f23-1774320082246.png](https://tryhackme-images.s3.amazonaws.com/user-uploads/678ecc92c80aa206339f0f23/room-content/678ecc92c80aa206339f0f23-1774320082246.png)
+
+**Interpretação:** Apenas **2 outliers** foram identificados em 2.000 eventos. Ambos os usuários comprometidos (`kbrown` e um segundo usuário) fizeram login em países anômalos **apenas uma vez** — um forte sinal de uso de VPN ou violação de credenciais.
+
+### 10.2 Detectando Outliers por Horário
+
+A detecção por horário é **mais complexa** que a detecção por país, pois você precisa considerar:
+
+- **Diferentes fusos horários** dos funcionários    
+- **Diferentes hábitos de trabalho** (horário comercial vs. noturno)
+
+#### Metodologia: Z-Score
+
+|Conceito|Definição|Exemplo|
+|---|---|---|
+|**Hora típica**|Hora média em que o funcionário faz login|13:30 UTC|
+|**Desvio padrão**|Medida de previsibilidade (0 = mais previsível)|`stdev_hour = 2` → login esperado às 13:30 ± 2 horas|
+|**Z-Score**|Número de desvios padrão entre a hora observada e a típica|`zscore = 3` → hora de login x3 anômala para este usuário|
+
+#### Consulta para Detecção por Horário
+
+```text
+index=vpnlogs
+| eval hour = tonumber(strftime(_time, "%H")) + tonumber(strftime(_time, "%M"))/60
+| eventstats avg(hour) as typical_hour stdev(hour) as stdev_hour by user
+| eval zscore = abs(hour - typical_hour) / stdev_hour
+| where zscore > 3
+| eval hour = round(hour, 2), typical_hour = round(typical_hour, 2)
+| eval stdev_hour = round(stdev_hour, 2), zscore = round(zscore, 2)
+| table _time user src_ip src_country hour typical_hour stdev_hour zscore
+| sort - zscore
+```
+
+#### Explicação da Consulta
+
+|Linha|Comando|Propósito|
+|---|---|---|
+|2|`eval hour = ...`|Converte timestamp em hora decimal (ex: 13:30 = 13,5)|
+|3|`eventstats avg(...) stdev(...) by user`|Calcula média e desvio padrão **por usuário**|
+|4|`eval zscore = ...`|Mede o quão anômala é a hora do login|
+|5|`where zscore > 3`|Filtra apenas logins **altamente anômalos** (threshold = 3σ)|
+|6-7|`eval ... round(...)`|Arredonda valores para melhor visualização|
+|8-9|`table ... sort -zscore`|Exibe e ordena resultados por z-score (maior→menor)|
+
+#### Resultado Esperado
+
+![https://tryhackme-images.s3.amazonaws.com/user-uploads/678ecc92c80aa206339f0f23/room-content/678ecc92c80aa206339f0f23-1774320082620.png](https://tryhackme-images.s3.amazonaws.com/user-uploads/678ecc92c80aa206339f0f23/room-content/678ecc92c80aa206339f0f23-1774320082620.png)
+
+**Exemplo prático:** O usuário `jsmith` tem:
+
+- Horário típico de login: **13:30**    
+- Baixo desvio padrão (login consistente)
+- Um login observado às **18:30** (5 horas após o normal)
+- Z-Score elevado → **vale a pena investigar!**
+
+### 10.3 Técnicas Avançadas
+
+#### Viagem Impossível (Impossible Travel)
+
+Detecções mais avançadas, como a [Viagem Impossível](https://lantern.splunk.com/Security_Use_Cases/Compliance/Running_common_GDPR_compliance_searches/Geographically_improbable_access_detected), são construídas sobre os mesmos comandos básicos abordados nesta sala.
+
+**Conceito:** Um mesmo usuário não pode fazer login no Brasil e na Austrália com 10 minutos de diferença — isso violaria as leis da física (tempo de viagem de avião).
+
+**Componentes necessários:**
+
+- Conhecimento de **SPL** (Splunk Processing Language)
+- **Matemática básica** (cálculo de distâncias geográficas)
+- **Contexto de ameaças** (geolocalização de IPs, inteligência de ameaças)
+
+#### Comandos Splunk Avançados para Detecção
+
+|Comando|Função|Exemplo de Uso|
+|---|---|---|
+|`iplocation`|Geolocaliza endereços IP|`iplocation src_ip` → latitude, longitude, país, cidade|
+|`lookup`|Enriquece dados com tabelas externas|`lookup threat_intel.csv ip OUTPUT threat_score`|
+|`fit`|Treina modelos de machine learning|`fit StandardScaler` → padronização de dados|
+|`apply`|Aplica modelos treinados a novos dados|`apply anomaly_detection_model` → detecta outliers futuros|
+
+#### Exemplo: Detecção de Viagem Impossível (Conceitual)
+
+```text
+index=vpnlogs
+| iplocation src_ip
+| eventstats earliest(_time) as first_login, latest(_time) as last_login by user
+| eval travel_time_hours = (last_login - first_login) / 3600
+| eval distance_km = geo_distance(initial_lat, initial_lon, final_lat, final_lon)
+| eval possible = if(distance_km / 800 < travel_time_hours, "POSSÍVEL", "IMPOSSÍVEL")
+| where possible = "IMPOSSÍVEL"
+```
+
+#### Machine Learning no Splunk
+
+O Splunk permite **treinar modelos** nos seus dados e **aplicá-los** a novos eventos:
+
+|Fase|Comando|Descrição|
+|---|---|---|
+|**Treinamento**|`fit`|Cria um modelo baseado em dados históricos (ex: "horários normais do usuário")|
+|**Aplicação**|`apply`|Usa o modelo treinado para classificar novos eventos (ex: "este login é anômalo?")|
+
+**Exemplo conceitual:**
+
+```text
+index=vpnlogs
+| fit IsolationForest anomaly_detection by user hour src_country
+| apply anomaly_detection to new_logs
+```
+
+### Resumo dos Padrões de Detecção
+
+|Tipo de Anomalia|Comandos Principais|Limiar Típico|Aplicação|
+|---|---|---|---|
+|**País raro**|`eventstats`, `eval`, `where`|`country_freq < 0.1`|VPNs suspeitas, contas comprometidas|
+|**Horário anômalo**|`strftime`, `avg`, `stdev`, `zscore`|`zscore > 3`|Acesso fora do horário comercial|
+|**Viagem impossível**|`iplocation`, `geo_distance`, `eval`|`travel_time < físico`|Roubo de sessão, conta comprometida|
+|**ML - Anomalia geral**|`fit`, `apply`|Modelo-dependente|Detecção de padrões complexos|
+
+
+> **Boas práticas:** 
+> - Ajuste os **limiares** conforme a realidade da sua organização
+> - Combine **múltiplos métodos** (país + horário) para maior precisão
+> - Use **visualizações** (tabelas, gráficos de dispersão) para validar os outliers
+> - Comece com regras simples antes de avançar para ML
+
+---
+## 11. Conclusão
 
 O Splunk é uma ferramenta essencial no ecossistema de segurança e análise de dados, oferecendo uma plataforma robusta para coleta, indexação, pesquisa e visualização de logs. Seus três componentes principais — **Forwarder, Indexer e Search Head** — trabalham em conjunto para fornecer escalabilidade e eficiência no processamento de grandes volumes de dados.
 
@@ -557,7 +735,7 @@ Para profissionais de cibersegurança, o Splunk é uma ferramenta indispensável
 Com a prática e o aprofundamento em SPL, o Splunk se torna um aliado poderoso na defesa e análise de ambientes corporativos.
 
 ---
-## 11. Referências
+## 12. Referências
 
 |Tipo|Descrição|Link|
 |---|---|---|
