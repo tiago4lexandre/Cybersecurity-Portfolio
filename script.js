@@ -15,6 +15,7 @@ const data = {
 	blueteam: [
 		{ title: 'Splunk Analysis', file: 'BlueTeam/SPLUNK1/README.md', slug: 'splunk1' },
 		{ title: 'Splunk Dashboards & Reports', file: 'BlueTeam/SPLUNK2/README.md', slug: 'splunk2' },
+		{ title: 'Splunk Data Manipulation', file: 'BlueTeam/SPLUNK3/README.md', slug: 'splunk3' },
 		{ title: 'Relatório de Alerta para SOC L1', file: 'BlueTeam/RelatóriosSOCL1/README.md', slug: 'realtorioSOCL1' },
 		{ title: 'SOC Simulator: Introduction to Phishing' , file: 'BlueTeam/PhishingSOC/README.md', slug: 'phishingSOC' },
 	],
