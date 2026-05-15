@@ -16,6 +16,76 @@
 </p>
 
 ---
+# 🪟 Escalação de Privilégios no Windows
+## Técnicas Práticas de Elevação para NT AUTHORITY\SYSTEM
+
+> A escalação de privilégios em ambientes Windows é uma das fases mais críticas da pós-exploração.
+>
+> Após obter acesso inicial com um usuário de baixo privilégio, o objetivo é identificar **configurações inseguras, permissões mal atribuídas, credenciais expostas ou serviços vulneráveis** que permitam elevar o contexto de execução para **Administrador** ou **NT AUTHORITY\SYSTEM**.
+>
+> Diferente de ataques puramente baseados em exploits de kernel, a maioria das escaladas reais ocorre devido a **más práticas administrativas**, falhas de configuração e negligência operacional.
+
+---
+
+## 🎯 Objetivos do Documento
+
+Este guia apresenta uma abordagem estruturada e prática para:
+
+- Identificar credenciais expostas em arquivos e históricos
+- Enumerar serviços e tarefas mal configuradas
+- Explorar permissões inseguras em arquivos e Service ACLs
+- Abusar de políticas como `AlwaysInstallElevated`
+- Explorar privilégios como `SeBackupPrivilege`, `SeImpersonate`, `SeTakeOwnership`
+- Executar técnicas de Pass-the-Hash
+- Consolidar metodologia de pós-exploração em Windows
+
+---
+
+## 📌 Escopo Técnico
+
+- **Plataforma:** Microsoft Windows
+- **Contexto:** Pós-exploração / Red Team / Pentest Interno
+- **Nível Inicial:** Usuário não privilegiado
+- **Objetivo Final:** NT AUTHORITY\SYSTEM
+- **Vetores Abordados:**
+  - Credenciais expostas
+  - Serviços vulneráveis
+  - Tarefas agendadas
+  - Privilégios abusáveis
+  - Software de terceiros vulnerável
+
+---
+
+## 🧠 Conceitos Fundamentais Envolvidos
+
+- Token Privileges e Security Context
+- Service Control Manager (SCM)
+- ACLs (Access Control Lists)
+- SID e Grupos Locais
+- UAC e Integrity Levels
+- Pass-the-Hash
+- Impersonation Attacks
+- Post-Exploitation Tradecraft
+
+---
+
+## 🏷️ Tags
+
+`#WindowsPrivesc` `#PrivilegeEscalation`  
+`#PostExploitation` `#RedTeam`  
+`#SeImpersonate` `#ServiceAbuse`  
+`#AlwaysInstallElevated` `#PassTheHash`  
+`#CyberSecurity`
+
+---
+
+## ⚠️ Aviso Legal
+
+> Este material é destinado exclusivamente para fins educacionais, laboratórios controlados e ambientes com autorização formal.
+>
+> A exploração de sistemas sem permissão é ilegal e pode resultar em consequências criminais.
+
+---
 
 # Escalação de Privilégios no Windows
 
