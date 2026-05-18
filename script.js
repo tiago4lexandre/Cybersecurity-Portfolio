@@ -55,6 +55,7 @@ const data = {
 		{ title: 'John The Ripper', file: 'Ferramentas/John-The-Ripper/README.md', slug: 'john-the-ripper' },
 	],
 	labs: [
+		{ title: 'PortSwigger XSS Apprentice Level', file: 'Laboratorios/PortSwigger-XSS-LVL1', slug: 'XSS-LVL1' },
 		{ title: 'Linux Privilege Escalation — TryHackMe', file: 'Laboratorios/THM-LinuxPrivilegeEscalation/README.md', slug: 'thm-linux-privilege-escalation' },
 		{ title: 'Mr. Robot — TryHackMe', file: 'Laboratorios/THM-MrRobot/README.md', slug: 'thm-mr-robot' },
 		{ title: 'Gallery — TryHackMe', file: 'Laboratorios/THM-Gallery/README.md', slug: 'thm-gallery' },
