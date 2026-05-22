@@ -344,7 +344,8 @@ function loadHome() {
 		<ul style="margin-top: 40px; border-top: 1px solid #222; padding-top: 20px;">
 			<div class="linkedin-slider">
 				<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7463620284965851137?collapsed=1" frameborder="0" allowfullscreen="" title="Publicação 1"></iframe>
-				<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7274451392851816449?collapsed=1" frameborder="0" allowfullscreen="" title="Publicação 2"></iframe>
+				<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7461081288083472384?collapsed=1" frameborder="0" allowfullscreen="" title="Publicação 2"></iframe>
+				<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7274451392851816449?collapsed=1" frameborder="0" allowfullscreen="" title="Publicação 3"></iframe>
 			</div>			
 		</ul>
 
