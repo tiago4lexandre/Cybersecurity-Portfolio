@@ -25,6 +25,11 @@ const data = {
       file: "RedTeam/LFI-RFI/README.md",
       slug: "lfi-rfi",
     },
+	{
+      title: "SQL Injections",
+      file: "RedTeam/SQLi/README.md",
+      slug: "sqli",
+    },
     {
       title: "Cross-Site Scripting (XSS)",
       file: "RedTeam/XSS/README.md",
