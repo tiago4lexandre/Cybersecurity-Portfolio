@@ -242,6 +242,11 @@ const data = {
 // Configuração do marked para usar highlight.js
 marked.setOptions({
   highlight: function (code, lang) {
+    // Não aplica highlight.js em blocos mermaid: eles serão
+    // renderizados como diagramas, não como código.
+    if (lang === "mermaid") {
+      return code;
+    }
     if (lang && hljs.getLanguage(lang)) {
       return hljs.highlight(code, { language: lang }).value;
     }
@@ -251,12 +256,42 @@ marked.setOptions({
   gfm: true,
 });
 
+// Inicializa o Mermaid uma única vez (a lib precisa estar incluída no HTML).
+if (typeof mermaid !== "undefined") {
+  mermaid.initialize({ startOnLoad: false, theme: "dark" });
+}
+
 function aplicarSyntaxHighlighting() {
   document.querySelectorAll("pre code").forEach((block) => {
+    // Ignora blocos mermaid: eles não devem passar pelo highlight.js.
+    if (block.classList.contains("language-mermaid")) return;
     if (!block.classList.contains("hljs")) {
       hljs.highlightElement(block);
     }
   });
+}
+
+function renderizarMermaid() {
+  if (typeof mermaid === "undefined") {
+    console.warn("Mermaid.js não foi carregado na página.");
+    return;
+  }
+
+  const blocos = document.querySelectorAll(
+    "#content pre code.language-mermaid",
+  );
+
+  blocos.forEach((bloco) => {
+    const pre = bloco.parentElement;
+    const div = document.createElement("div");
+    div.classList.add("mermaid");
+    div.textContent = bloco.textContent;
+    pre.replaceWith(div);
+  });
+
+  if (blocos.length > 0) {
+    mermaid.run({ querySelector: "#content .mermaid" });
+  }
 }
 
 function toggleMenu() {
@@ -464,6 +499,7 @@ async function loadMarkdown(path) {
 
     content.innerHTML = marked.parse(markdown);
     aplicarSyntaxHighlighting();
+    renderizarMermaid();
     setTimeout(fixImages, 100);
   } catch {
     content.innerHTML = "<p>Erro ao carregar o documento.</p>";
