@@ -67,25 +67,28 @@ Este material foi desenvolvido com foco **educacional e profissional**, simuland
 
 ## Como Funciona o MITM via ARP Spoofing?
 
-```text
-┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
-│    VÍTIMA       │         │    ATACANTE     │         │     GATEWAY     │
-│  192.168.1.100  │         │  192.168.1.50   │         │   192.168.1.1   │
-│     MAC: A1     │         │     MAC: B2     │         │     MAC: C3     │
-└─────────────────┘         └─────────────────┘         └─────────────────┘
-        │                           │                           │
-        │                           │                           │
-        │   "C3 é 192.168.1.1"     │   "B2 é 192.168.1.1"      │
-        │◄──────────────────────────│                           │
-        │                           │                           │
-        │   "A1 é 192.168.1.100"   │   "B2 é 192.168.1.100"    │
-        │                           ├──────────────────────────►│
-        │                           │                           │
-        ├──────────┐                │                ┌──────────┤
-        │A1→B2→C3  │                │                │C3→B2→A1  │
-        │(Tráfego  │                │                │(Tráfego  │
-        │intercept)│                │                │intercept)│
-        └──────────┘                │                └──────────┘
+```mermaid
+sequenceDiagram
+    participant V as VÍTIMA<br/>192.168.1.100<br/>MAC: A1
+    participant A as ATACANTE<br/>192.168.1.50<br/>MAC: B2
+    participant G as GATEWAY<br/>192.168.1.1<br/>MAC: C3
+
+    Note over V,G: Fase de ARP Spoofing (envenenamento de cache)
+
+    A->>V: ARP Reply falso:<br/>"C3 é 192.168.1.1"<br/>(na verdade é B2)
+
+    A->>G: ARP Reply falso:<br/>"B2 é 192.168.1.100"<br/>(na verdade é A1)
+
+    Note over V,A: Vítima passa a enviar tráfego<br/>destinado ao Gateway para o Atacante
+    Note over A,G: Gateway passa a enviar tráfego<br/>destinado à Vítima para o Atacante
+
+    rect rgb(255, 230, 230)
+    Note over V,A: Tráfego interceptado: A1 → B2 → C3
+    end
+
+    rect rgb(255, 230, 230)
+    Note over A,G: Tráfego interceptado: C3 → B2 → A1
+    end
 ```
 
 ## Vantagens do BetterCap para ARP Spoofing
