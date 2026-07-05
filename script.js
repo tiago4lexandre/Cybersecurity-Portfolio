@@ -130,6 +130,11 @@ const data = {
       file: "Linux/Stable-ReverseShell/README.md",
       slug: "stable-reverse-shell",
     },
+	{
+      title: "Ataques a servidores web",
+      file: "Linux/webserverattacks/README.md",
+      slug: "webserverattacks",
+    },
   ],
   windows: [
     {
