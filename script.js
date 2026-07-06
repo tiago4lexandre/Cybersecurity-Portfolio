@@ -181,6 +181,11 @@ const data = {
     },
   ],
   tools: [
+	{
+      title: "Metasploit I",
+      file: "Ferramentas/Metaspoit1/README.md",
+      slug: "metasploit1",
+    },
     {
       title: "MSFvenom",
       file: "Ferramentas/MSFvenom/README.md",
