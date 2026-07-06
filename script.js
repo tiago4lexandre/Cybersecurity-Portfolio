@@ -183,7 +183,7 @@ const data = {
   tools: [
 	{
       title: "Metasploit I",
-      file: "Ferramentas/Metaspoit1/README.md",
+      file: "Ferramentas/Metasploit1/README.md",
       slug: "metasploit1",
     },
     {
