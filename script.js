@@ -182,9 +182,14 @@ const data = {
   ],
   tools: [
 	{
-      title: "Metasploit I",
+      title: "Metasploit I - O Básico",
       file: "Ferramentas/Metasploit1/README.md",
       slug: "metasploit1",
+    },
+	{
+      title: "Metasploit II - Varredura e Exploração",
+      file: "Ferramentas/Metasploit2/README.md",
+      slug: "metasploit2",
     },
     {
       title: "MSFvenom",
