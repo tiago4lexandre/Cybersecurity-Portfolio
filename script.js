@@ -11,9 +11,14 @@ const data = {
       desc: "Guia completo de etapas e metodologias para testes de invasão.",
     },
     {
-      title: "API Security",
-      file: "RedTeam/API/README.md",
-      slug: "api-pentest",
+      title: "API Pentesting I",
+      file: "RedTeam/API-Pentesting-I/README.md",
+      slug: "api-pentest-1",
+    },
+    {
+      title: "API Pentesting II",
+      file: "RedTeam/API-Pentesting-II/README.md",
+      slug: "api-pentest-2",
     },
     {
       title: "Firewall Evasion",
@@ -92,7 +97,7 @@ const data = {
       file: "Vulnerabilidades/CopyFail/README.md",
       slug: "copyfail",
     },
-	{
+	  {
       title: "CVE-2025-6861 — n8n",
       file: "Vulnerabilidades/n8n/README.md",
       slug: "n8n",
