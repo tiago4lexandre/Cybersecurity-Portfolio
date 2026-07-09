@@ -92,6 +92,11 @@ const data = {
       file: "Vulnerabilidades/CopyFail/README.md",
       slug: "copyfail",
     },
+	{
+      title: "CVE-2025-6861 — n8n",
+      file: "Vulnerabilidades/n8n/README.md",
+      slug: "n8n",
+    },
     {
       title: "CVE-2025-55182 — React2Shell",
       file: "Vulnerabilidades/React2Shell/README.md",
