@@ -60,9 +60,12 @@ A vulnerabilidade reside no **sistema de avaliação de expressões**, onde expr
 
 Considere o seguinte *payload* do [wioui](https://github.com/wioui/n8n-CVE-2025-68613-explot):
 
+{% raw %}
 ```text
 {{ (function(){ return this.process.mainModule.require('child_process').execSync('id').toString() })() }}
 ```
+{% endraw %}
+
 
 Dentro de todas essas camadas de chaves, é possível identificar o padrão `(function(){ ... })()`. Esse padrão cria e executa imediatamente uma função anônima. O atacante tenta encapsular lógica complexa mantendo o contexto de execução. Para facilitar a leitura, a função anônima é apresentada abaixo:
 
