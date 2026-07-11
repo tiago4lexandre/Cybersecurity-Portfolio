@@ -20,6 +20,11 @@ const data = {
       file: "RedTeam/API-Pentesting-II/README.md",
       slug: "api-pentest-2",
     },
+	{
+      title: "Phishing",
+      file: "RedTeam/phishing/README.md",
+      slug: "phishing",
+    },
     {
       title: "Firewall Evasion",
       file: "RedTeam/Firewalls/README.md",
