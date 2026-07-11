@@ -1,0 +1,628 @@
+{
+  "redteam": [
+    {
+      "title": "API Pentesting I",
+      "file": "RedTeam/API-Pentesting-I/API-Pentesting-I.md",
+      "slug": "api-pentesting-i",
+      "desc": "Fundamentos de segurança em APIs, cobrindo técnicas de mapeamento, testes de endpoints e OWASP API Top 10.",
+      "tags": [
+        "api",
+        "web-sec",
+        "pentest"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "API Pentesting II",
+      "file": "RedTeam/API-Pentesting-II/API-Pentesting-II.md",
+      "slug": "api-pentesting-ii",
+      "desc": "Técnicas avançadas de exploração de APIs, manipulação de tokens JWT, injeção de parâmetros e testes de autorização.",
+      "tags": [
+        "api",
+        "web-sec",
+        "exploitation"
+      ],
+      "readTime": "7 min"
+    },
+    {
+      "title": "Firewall Evasion",
+      "file": "RedTeam/Firewalls/Firewalls.md",
+      "slug": "firewall-evasion",
+      "desc": "Estudo de técnicas de evasão de Web Application Firewalls (WAF) e firewalls de rede através de fragmentação e codificação.",
+      "tags": [
+        "firewall",
+        "evasion",
+        "network"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "Local File Inclusion e Remote File Inclusion (LFI & RFI)",
+      "file": "RedTeam/LFI-RFI/LFI-RFI.md",
+      "slug": "local-file-inclusion-e-remote-file-inclusion-lfi-rfi",
+      "desc": "Exploração de vulnerabilidades de inclusão de arquivos locais e remotos para obter execução de código (RCE).",
+      "tags": [
+        "web-sec",
+        "lfi",
+        "rfi",
+        "rce"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "Pentest Checklist",
+      "file": "RedTeam/Pentest-Checklist/Pentest-Checklist.md",
+      "slug": "pentest-checklist",
+      "desc": "Guia completo contendo etapas, ferramentas e metodologias para testes de invasão e auditoria de segurança.",
+      "tags": [
+        "checklist",
+        "pentest",
+        "off-sec"
+      ],
+      "readTime": "8 min"
+    },
+    {
+      "title": "Phishing",
+      "file": "RedTeam/Phishing/Phishing.md",
+      "slug": "phishing",
+      "desc": "Engenharia social aplicada: metodologias de criação de campanhas de phishing, clonagem de páginas e desvio de filtros.",
+      "tags": [
+        "social-eng",
+        "phishing",
+        "red-team"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "SQL Injections",
+      "file": "RedTeam/SQLi/SQLi.md",
+      "slug": "sql-injections",
+      "desc": "Guia prático de SQLi (In-band, Error-based, Blind, Time-based) com foco em extração manual de dados e desvio de autenticação.",
+      "tags": [
+        "web-sec",
+        "sqli",
+        "database"
+      ],
+      "readTime": "7 min"
+    },
+    {
+      "title": "Server-Side Request Forgery (SSRF)",
+      "file": "RedTeam/SSRF/SSRF.md",
+      "slug": "server-side-request-forgery-ssrf",
+      "desc": "Exploração de SSRF para acessar recursos internos, ler metadados de nuvem e realizar escaneamento de portas internas.",
+      "tags": [
+        "web-sec",
+        "ssrf",
+        "cloud"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "Weaponization",
+      "file": "RedTeam/Weaponization/Weaponization.md",
+      "slug": "weaponization",
+      "desc": "Processo de preparação de payloads, ofuscação de código e empacotamento de artefatos maliciosos para burlar antivírus.",
+      "tags": [
+        "payloads",
+        "malware",
+        "av-bypass"
+      ],
+      "readTime": "8 min"
+    },
+    {
+      "title": "Cross-Site Scripting (XSS)",
+      "file": "RedTeam/XSS/XSS.md",
+      "slug": "cross-site-scripting-xss",
+      "desc": "Análise aprofundada de XSS Stored, Reflected e DOM-based, com payloads de bypass e roubo de sessão.",
+      "tags": [
+        "web-sec",
+        "xss",
+        "javascript"
+      ],
+      "readTime": "6 min"
+    }
+  ],
+  "blueteam": [
+    {
+      "title": "SOC Simulator: Introduction to Phishing",
+      "file": "BlueTeam/PhishingSOC/PhishingSOC.md",
+      "slug": "soc-simulator-introduction-to-phishing",
+      "desc": "Simulação prática de análise e mitigação de e-mails suspeitos e phishing em monitoramento SOC.",
+      "tags": [
+        "soc",
+        "phishing",
+        "incident-response"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "Relatório de Alerta para SOC L1",
+      "file": "BlueTeam/RelatoriosSOCL1/RelatoriosSOCL1.md",
+      "slug": "relatrio-de-alerta-para-soc-l1",
+      "desc": "Modelo estruturado de triagem de alertas de incidentes e elaboração de relatórios para analistas de SOC L1.",
+      "tags": [
+        "soc",
+        "reporting",
+        "incident-response"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "Splunk Analysis",
+      "file": "BlueTeam/SPLUNK1/SPLUNK1.md",
+      "slug": "splunk-analysis",
+      "desc": "Análise de logs de segurança com a linguagem SPL (Search Processing Language) no Splunk.",
+      "tags": [
+        "splunk",
+        "siem",
+        "blue-team",
+        "analysis"
+      ],
+      "readTime": "8 min"
+    },
+    {
+      "title": "Splunk Dashboards & Reports",
+      "file": "BlueTeam/SPLUNK2/SPLUNK2.md",
+      "slug": "splunk-dashboards-reports",
+      "desc": "Criação de painéis visuais, métricas de segurança e relatórios automatizados no Splunk para SOC.",
+      "tags": [
+        "splunk",
+        "dashboard",
+        "reporting"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "Splunk Data Manipulation",
+      "file": "BlueTeam/SPLUNK3/SPLUNK3.md",
+      "slug": "splunk-data-manipulation",
+      "desc": "Técnicas de parsing, enriquecimento de logs e ingestão estruturada de dados no Splunk.",
+      "tags": [
+        "splunk",
+        "siem",
+        "blue-team"
+      ],
+      "readTime": "7 min"
+    },
+    {
+      "title": "Wazuh",
+      "file": "BlueTeam/WAZUH1/WAZUH1.md",
+      "slug": "wazuh",
+      "desc": "Implementação, configuração e monitoramento ativo utilizando a plataforma SIEM/XDR open-source Wazuh.",
+      "tags": [
+        "wazuh",
+        "siem",
+        "blue-team",
+        "monitoring"
+      ],
+      "readTime": "10 min"
+    }
+  ],
+  "forensics": [
+    {
+      "title": "Análise de MBR e GPT",
+      "file": "Forensics/MBR_GPT/MBR_GPT.md",
+      "slug": "anlise-de-mbr-e-gpt",
+      "desc": "Fundamentos de computação forense aplicados a discos rígidos: análise das tabelas de partição MBR e GPT.",
+      "tags": [
+        "forensics",
+        "disk-analysis",
+        "mbr",
+        "gpt"
+      ],
+      "readTime": "8 min"
+    }
+  ],
+  "cves": [
+    {
+      "title": "CVE-2026-31431 — Copy-Fail",
+      "file": "Vulnerabilidades/CopyFail/CopyFail.md",
+      "slug": "cve-2026-31431-copy-fail",
+      "desc": "Análise técnica detalhada da vulnerabilidade Copy-Fail de 2026, cobrindo causa raiz, impacto e correção.",
+      "tags": [
+        "cve",
+        "vulnerability",
+        "exploit"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "CVE-2022-0847 — Dirty Pipe",
+      "file": "Vulnerabilidades/DirtyPipez/DirtyPipez.md",
+      "slug": "cve-2022-0847-dirty-pipe",
+      "desc": "Explicação detalhada e exploit da falha Dirty Pipe no Kernel Linux, permitindo escrita arbitrária em arquivos read-only.",
+      "tags": [
+        "cve",
+        "vulnerability",
+        "linux",
+        "privesc"
+      ],
+      "readTime": "9 min"
+    },
+    {
+      "title": "CVE-2024-21413 — Moniker Link",
+      "file": "Vulnerabilidades/MonikerLink/MonikerLink.md",
+      "slug": "cve-2024-21413-moniker-link",
+      "desc": "Análise do bug crítico no Microsoft Outlook que permite vazamento de credenciais NetNTLM e RCE remoto.",
+      "tags": [
+        "cve",
+        "vulnerability",
+        "moniker-link",
+        "outlook"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "CVE-2021-4034 — Pwnkit",
+      "file": "Vulnerabilidades/Pwnkit/Pwnkit.md",
+      "slug": "cve-2021-4034-pwnkit",
+      "desc": "Análise do utilitário pkexec do Linux (Polkit), demonstrando como obter privilégios de root instantaneamente.",
+      "tags": [
+        "cve",
+        "vulnerability",
+        "linux",
+        "privesc"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "CVE-2025-55182 — React2Shell",
+      "file": "Vulnerabilidades/React2Shell/React2Shell.md",
+      "slug": "cve-2025-55182-react2shell",
+      "desc": "Exploração prática e remedição da falha React2Shell, que permite injeção de comandos a partir de formulários React.",
+      "tags": [
+        "cve",
+        "vulnerability",
+        "react",
+        "rce"
+      ],
+      "readTime": "7 min"
+    },
+    {
+      "title": "CVE-2021-29447 — WordPress",
+      "file": "Vulnerabilidades/WordPress/WordPress.md",
+      "slug": "cve-2021-29447-wordpress",
+      "desc": "Abuso da vulnerabilidade de XXE (XML External Entity) na importação de mídia do WordPress para ler arquivos locais.",
+      "tags": [
+        "cve",
+        "vulnerability",
+        "wordpress",
+        "xxe"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "CVE-2025-6861 — n8n",
+      "file": "Vulnerabilidades/n8n/n8n.md",
+      "slug": "cve-2025-6861-n8n",
+      "desc": "Estudo sobre a falha de segurança descoberta na plataforma de automação n8n, permitindo bypass de autenticação.",
+      "tags": [
+        "cve",
+        "vulnerability",
+        "n8n"
+      ],
+      "readTime": "5 min"
+    }
+  ],
+  "linux": [
+    {
+      "title": "Linux Privilege Escalation",
+      "file": "Linux/Linux-Privilege-Escalation/Linux-Privilege-Escalation.md",
+      "slug": "linux-privilege-escalation",
+      "desc": "Metodologia completa para escalação de privilégios em sistemas Linux, incluindo SUIDs, Crontabs e exploits de Kernel.",
+      "tags": [
+        "linux",
+        "privesc",
+        "post-exploitation"
+      ],
+      "readTime": "9 min"
+    },
+    {
+      "title": "Stable Reverse Shell",
+      "file": "Linux/Stable-ReverseShell/Stable-ReverseShell.md",
+      "slug": "stable-reverse-shell",
+      "desc": "Guia passo-a-passo para estabilizar conexões de shell reverso usando Python, stty e variáveis de ambiente em sistemas Linux.",
+      "tags": [
+        "linux",
+        "shell",
+        "reverse-shell"
+      ],
+      "readTime": "4 min"
+    },
+    {
+      "title": "Ataques a servidores web",
+      "file": "Linux/webserverattacks/webserverattacks.md",
+      "slug": "ataques-a-servidores-web",
+      "desc": "Técnicas de auditoria e testes de intrusão em servidores web (Apache/Nginx) hospedados em ambientes Linux.",
+      "tags": [
+        "linux",
+        "web-sec",
+        "attacks"
+      ],
+      "readTime": "7 min"
+    }
+  ],
+  "windows": [
+    {
+      "title": "Windows Active Directory",
+      "file": "Windows/ActiveDirectory/ActiveDirectory.md",
+      "slug": "windows-active-directory",
+      "desc": "Exploração de redes empresariais governadas por AD: técnicas de Kerberoasting, AS-REP Roasting e Golden Tickets.",
+      "tags": [
+        "windows",
+        "active-directory",
+        "post-exploitation"
+      ],
+      "readTime": "10 min"
+    },
+    {
+      "title": "DLL Hijacking + PrintDemon (CVE-2020-1048)",
+      "file": "Windows/DLL-Hijacking/DLL-Hijacking.md",
+      "slug": "dll-hijacking-printdemon-cve-2020-1048",
+      "desc": "Abuso do mecanismo de busca de DLLs do Windows combinado com a vulnerabilidade de PrintDemon para escalação de privilégios.",
+      "tags": [
+        "windows",
+        "dll-hijacking",
+        "privesc"
+      ],
+      "readTime": "7 min"
+    },
+    {
+      "title": "EternalBlue — MS17-010",
+      "file": "Windows/EternalBlue/EternalBlue.md",
+      "slug": "eternalblue-ms17-010",
+      "desc": "Exploração da clássica e crítica falha SMB MS17-010 usando Metasploit e scripts manuais em Python.",
+      "tags": [
+        "windows",
+        "exploit",
+        "eternalblue"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "IIS (INTERNET INFORMATION SERVICES)",
+      "file": "Windows/IIS/IIS.md",
+      "slug": "iis-internet-information-services",
+      "desc": "Auditoria, varredura de vulnerabilidades comuns e hardening em servidores web Microsoft IIS.",
+      "tags": [
+        "windows",
+        "iis",
+        "webserver"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "Powershell-Empire & Starkiller",
+      "file": "Windows/Powershell-Empire/Powershell-Empire.md",
+      "slug": "powershell-empire-starkiller",
+      "desc": "Uso avançado do C2 Powershell Empire através da interface Starkiller para pós-exploração e controle de agentes.",
+      "tags": [
+        "windows",
+        "c2",
+        "post-exploitation"
+      ],
+      "readTime": "8 min"
+    },
+    {
+      "title": "Windows Privilege Escalation",
+      "file": "Windows/Windows-PrivilegeEscalation/Windows-PrivilegeEscalation.md",
+      "slug": "windows-privilege-escalation",
+      "desc": "Técnicas de escalação de privilégios locais no Windows, cobrindo token manipulation, services vulneráveis e DLL Hijacking.",
+      "tags": [
+        "windows",
+        "privesc",
+        "post-exploitation"
+      ],
+      "readTime": "9 min"
+    }
+  ],
+  "network": [
+    {
+      "title": "ARP Spoofing & MITM",
+      "file": "Network/ARP-Spoofing-MITM/ARP-Spoofing-MITM.md",
+      "slug": "arp-spoofing-mitm",
+      "desc": "Demonstração prática de ataques Man-in-the-Middle (MITM) utilizando envenenamento de cache ARP em redes locais.",
+      "tags": [
+        "network",
+        "arp-spoofing",
+        "mitm"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "Aircrack-ng",
+      "file": "Network/Aircrack-ng/Aircrack-ng.md",
+      "slug": "aircrack-ng",
+      "desc": "Exploração de redes Wi-Fi (WPA/WPA2-PSK): captura de handshakes e técnicas de cracking com a suite Aircrack-ng.",
+      "tags": [
+        "network",
+        "wifi",
+        "wireless"
+      ],
+      "readTime": "7 min"
+    }
+  ],
+  "tools": [
+    {
+      "title": "FFUF",
+      "file": "Ferramentas/FFUF/FFUF.md",
+      "slug": "ffuf",
+      "desc": "Fuzzing rápido em aplicações web usando FFUF: fuzzing de cabeçalhos, parâmetros e métodos HTTP.",
+      "tags": [
+        "tools",
+        "ffuf",
+        "fuzzing",
+        "web-sec"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "Gobuster",
+      "file": "Ferramentas/GoBuster/GoBuster.md",
+      "slug": "gobuster",
+      "desc": "Fuzzing de diretórios, subdomínios e DNS em servidores web utilizando a ferramenta Gobuster escrita em Go.",
+      "tags": [
+        "tools",
+        "gobuster",
+        "recon"
+      ],
+      "readTime": "4 min"
+    },
+    {
+      "title": "Hashcat",
+      "file": "Ferramentas/Hashcat/Hashcat.md",
+      "slug": "hashcat",
+      "desc": "Quebra de hashes de senhas acelerada por GPU utilizando as regras e ataques de dicionário do Hashcat.",
+      "tags": [
+        "tools",
+        "hashcat",
+        "cracking",
+        "passwords"
+      ],
+      "readTime": "7 min"
+    },
+    {
+      "title": "Hydra",
+      "file": "Ferramentas/Hydra/Hydra.md",
+      "slug": "hydra",
+      "desc": "Ataques de dicionário e brute force contra diversos protocolos de rede (SSH, FTP, HTTP, RDP) usando o Hydra.",
+      "tags": [
+        "tools",
+        "hydra",
+        "bruteforce",
+        "passwords"
+      ],
+      "readTime": "4 min"
+    },
+    {
+      "title": "John The Ripper",
+      "file": "Ferramentas/John-The-Ripper/John-The-Ripper.md",
+      "slug": "john-the-ripper",
+      "desc": "Quebra de senhas e hashes localmente utilizando o utilitário flexível John The Ripper.",
+      "tags": [
+        "tools",
+        "john",
+        "cracking",
+        "passwords"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "MSFvenom",
+      "file": "Ferramentas/MSFvenom/MSFvenom.md",
+      "slug": "msfvenom",
+      "desc": "Geração de payloads customizados, encoders para evasão e criação de executáveis reversos multi-plataforma.",
+      "tags": [
+        "tools",
+        "msfvenom",
+        "payloads"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "Metasploit I - O Básico",
+      "file": "Ferramentas/Metasploit1/Metasploit1.md",
+      "slug": "metasploit-i---o-bsico",
+      "desc": "Conceitos fundamentais da ferramenta de testes de invasão Metasploit Framework: módulos, payloads e listeners.",
+      "tags": [
+        "tools",
+        "metasploit",
+        "exploit"
+      ],
+      "readTime": "6 min"
+    },
+    {
+      "title": "Metasploit II - Varredura e Exploração",
+      "file": "Ferramentas/Metasploit2/Metasploit2.md",
+      "slug": "metasploit-ii---varredura-e-explorao",
+      "desc": "Varredura de redes locais, scanners auxiliares integrados e exploração activa de alvos utilizando o Metasploit.",
+      "tags": [
+        "tools",
+        "metasploit",
+        "exploit"
+      ],
+      "readTime": "7 min"
+    }
+  ],
+  "labs": [
+    {
+      "title": "PwnLab: Init",
+      "file": "Laboratorios/PWNLAB/PWNLAB.md",
+      "slug": "pwnlab-init",
+      "desc": "Write-up completo da máquina PwnLab do VulnHub, focando em LFI e escalação de privilégios via binários SUID.",
+      "tags": [
+        "labs",
+        "vulnhub",
+        "writeup",
+        "lfi",
+        "privesc"
+      ],
+      "readTime": "7 min"
+    },
+    {
+      "title": "PortSwigger XSS Apprentice Level",
+      "file": "Laboratorios/PortSwigger-XSS-LVL1/PortSwigger-XSS-LVL1.md",
+      "slug": "portswigger-xss-apprentice-level",
+      "desc": "Resolução e write-up dos laboratórios básicos de Cross-Site Scripting (XSS) da academia PortSwigger Web Security.",
+      "tags": [
+        "labs",
+        "portswigger",
+        "xss",
+        "web-sec"
+      ],
+      "readTime": "5 min"
+    },
+    {
+      "title": "Break Out The Cage — TryHackMe",
+      "file": "Laboratorios/THM-BreakOutTheCage/THM-BreakOutTheCage.md",
+      "slug": "break-out-the-cage-tryhackme",
+      "desc": "Exploração de engenharia reversa leve, criptografia básica e exploração de cronjobs no laboratório Break Out The Cage.",
+      "tags": [
+        "labs",
+        "thm",
+        "writeup",
+        "cryptography"
+      ],
+      "readTime": "8 min"
+    },
+    {
+      "title": "Gallery — TryHackMe",
+      "file": "Laboratorios/THM-Gallery/THM-Gallery.md",
+      "slug": "gallery-tryhackme",
+      "desc": "Exploração de vulnerabilidades em CMS e upload de arquivos para ganhar shell reverso, seguido por privesc no TryHackMe.",
+      "tags": [
+        "labs",
+        "thm",
+        "writeup",
+        "web-sec"
+      ],
+      "readTime": "7 min"
+    },
+    {
+      "title": "Linux Privilege Escalation — TryHackMe",
+      "file": "Laboratorios/THM-LinuxPrivilegeEscalation/THM-LinuxPrivilegeEscalation.md",
+      "slug": "linux-privilege-escalation-tryhackme",
+      "desc": "Laboratório prático de escalação de privilégios Linux na plataforma TryHackMe, cobrindo técnicas de exploração do sudo.",
+      "tags": [
+        "labs",
+        "thm",
+        "privesc",
+        "linux"
+      ],
+      "readTime": "8 min"
+    },
+    {
+      "title": "Mr. Robot — TryHackMe",
+      "file": "Laboratorios/THM-MrRobot/THM-MrRobot.md",
+      "slug": "mr-robot-tryhackme",
+      "desc": "Write-up completo da máquina Mr. Robot: da enumeração web até a escalação final para root.",
+      "tags": [
+        "labs",
+        "thm",
+        "writeup",
+        "ctf"
+      ],
+      "readTime": "9 min"
+    }
+  ]
+}

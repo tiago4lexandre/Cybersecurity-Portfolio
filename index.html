@@ -18,17 +18,22 @@
     <aside class="sidebar">
         <button class="menu-toggle" onclick="toggleMenu()">☰ Menu</button>
 
+        <div class="sidebar-search">
+            <input type="text" id="sidebarSearchInput" placeholder="🔍 Buscar documentos..." onkeyup="handleSidebarSearch(event)" onchange="handleSidebarSearch(event)">
+        </div>
+
         <nav class="menu">
-            <button onclick="location.hash='/'">Home</button>
-            <button onclick="navigateCategory('redteam')">Red Team</button>
-            <button onclick="navigateCategory('blueteam')">Blue Team</button>
-            <button onclick="navigateCategory('forensics')">Forensics</button>
-            <button onclick="navigateCategory('cves')">Vulnerabilidades Reais (CVE)</button>
-            <button onclick="navigateCategory('linux')">Linux Security</button>
-            <button onclick="navigateCategory('windows')">Windows Security</button>
-            <button onclick="navigateCategory('network')">Network Security</button>
-            <button onclick="navigateCategory('tools')">Ferramentas</button>
-            <button onclick="navigateCategory('labs')">Laboratórios Práticos</button>
+            <button id="menu-home" onclick="location.hash='/'">🏠 Home</button>
+            <button id="menu-explorer" onclick="location.hash='/explorer'">🔍 Explorar Docs</button>
+            <button id="menu-redteam" onclick="navigateCategory('redteam')">Red Team</button>
+            <button id="menu-blueteam" onclick="navigateCategory('blueteam')">Blue Team</button>
+            <button id="menu-forensics" onclick="navigateCategory('forensics')">Forensics</button>
+            <button id="menu-cves" onclick="navigateCategory('cves')">CVEs (Vulnerabilidades)</button>
+            <button id="menu-linux" onclick="navigateCategory('linux')">Linux Security</button>
+            <button id="menu-windows" onclick="navigateCategory('windows')">Windows Security</button>
+            <button id="menu-network" onclick="navigateCategory('network')">Network Security</button>
+            <button id="menu-tools" onclick="navigateCategory('tools')">Ferramentas</button>
+            <button id="menu-labs" onclick="navigateCategory('labs')">Laboratórios</button>
         </nav>
 
         <div class="ascii">
@@ -68,7 +73,17 @@
     </aside>
 
     <main class="main">
-        <div id="content"></div>
+        <button class="focus-mode-btn" onclick="toggleFocusMode()" title="Modo Foco (Ocultar Sidebar)">
+            <span class="focus-icon">◀</span>
+        </button>
+
+        <div class="article-layout">
+            <div id="content"></div>
+            <aside class="toc-panel hidden" id="tocPanel">
+                <div class="toc-header">📂 Tópicos</div>
+                <nav class="toc-links" id="tocLinks"></nav>
+            </aside>
+        </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
