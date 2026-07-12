@@ -418,6 +418,18 @@
   ],
   "network": [
     {
+      "title": "Wireless Security",
+      "file": "Network/Wireless-Security/Wireless-Security.md",
+      "slug": "wireless-security",
+      "desc": "Fundamentos de segurança em redes sem fio, cobrindo Wi-Fi, Bluetooth, RFID, NFC e riscos em dispositivos IoT.",
+      "tags": [
+        "network",
+        "wifi",
+        "wireless"
+      ],
+      "readTime": "20 min"
+    },
+    {
       "title": "ARP Spoofing & MITM",
       "file": "Network/ARP-Spoofing-MITM/ARP-Spoofing-MITM.md",
       "slug": "arp-spoofing-mitm",
